@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Fit Evolution - Registro</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1>Regístrate</h1>
+            <p class="desc">Crea una cuenta para seguir tu progreso.</p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <label for="id_username">Usuario</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="field-error">{{ form.username.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="id_email">Correo</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="field-error">{{ form.email.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="id_first_name">Nombre</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="field-error">{{ form.first_name.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="id_last_name">Apellido</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="field-error">{{ form.last_name.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="id_password1">Contraseña</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <div class="field-error">{{ form.password1.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="id_password2">Confirmar contraseña</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="field-error">{{ form.password2.errors.as_text|safe }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-login">Crear cuenta</button>
+            </form>
+
+            <p class="footer-text">
+                ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
