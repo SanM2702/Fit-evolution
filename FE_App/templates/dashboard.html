@@ -1,3 +1,61 @@
-<h1>Bienvenido {{ user.username }} 👋</h1>
-<p>Este será tu panel principal de Fit Evolution.</p>
-<a href="/admin/">Ir al panel de administración</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Fit Evolution</title>
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+  <!-- Site header (hidden during intro, shown after) -->
+  <header class="site-header" aria-hidden="true">
+    <img src="{% static 'images/Letras_FitEvolution.png' %}" alt="Fit Evolution" class="site-logo">
+    <div class="user-greeting">
+      Hola, {{ user.first_name }} {{ user.last_name }}
+      {% if user.is_staff %}
+      <div class="admin-link"><a href="{% url 'admin:index' %}">Panel Administrador</a></div>
+      {% endif %}
+    </div>
+  </header>
+  <!-- Intro overlay -->
+  <div id="intro" class="intro">
+    <img src="{% static 'images/Letras_FitEvolution.png' %}" alt="Fit Evolution" class="intro-logo">
+  </div>
+
+  <nav style="--max-p: 6; --max-z: 6;">
+    <a href="{% url 'fit-evolution' %}" style="--i:0; --img:url({% static 'images/Menu_OP1.png' %});" data-title="Fit-Evolution">
+      <div class="img"></div>
+      <h3 class="item-title">Fit-Evolution</h3>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+    <a href="#" style="--i:1; --img:url({% static 'images/Menu_OP2.png' %});" data-title="Perfil">
+      <div class="img"></div>
+      <h3 class="item-title">Perfil</h3>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+    <a href="#" style="--i:2; --img:url({% static 'images/Menu_OP3.png' %});" data-title="Sobrecarga">
+      <div class="img"></div>
+      <h3 class="item-title">Sobrecarga</h3>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+    <a href="#" style="--i:3; --img:url({% static 'images/Menu_OP4.png' %});" data-title="Nutricion">
+      <div class="img"></div>
+      <h3 class="item-title">Nutricion</h3>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+    <a href="#" style="--i:4; --img:url({% static 'images/Menu_OP5.png' %});" data-title="Cardiovasucular">
+      <div class="img"></div>
+      <h6 class="item-title">Cardiovasucular</h6>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+    <a href="#" style="--i:5; --img:url({% static 'images/Menu_OP6.png' %});" data-title="Merch">
+      <div class="img"></div>
+      <h3 class="item-title">Merch</h3>
+      <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
+    </a>
+  </nav>
+
+  <label>salir</label>
+  <script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

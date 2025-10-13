@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope');
+
+:root {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.5rem);
+  --clr-bg: #020617;
+  --clr-text: #fff;
+  --clr-primary: #fff;
+  
+  --hover-intensity: 10rem;
+  --hover-smoothness: 70ms; 
+  --fall-smoothness: 250ms;
+  --perspective: 2000px;
+}
+
+body {
+  height: 100svh;
+  display: grid;
+  place-items: center;
+  /* use DashboardCustom as primary dashboard font (fallback to Manrope then system) */
+  font-family: 'DashboardCustom', "Manrope", system-ui, sans-serif;
+  background-image: url("../images/Dashboard_Background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--clr-text);
+  overflow: hidden;
+  padding: 2em;
+}
+
+/* persistent header */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.15));
+  backdrop-filter: blur(6px);
+  transform: translateY(-100%);
+  transition: transform .6s ease, opacity .6s ease;
+  opacity: 0;
+}
+
+.site-header.visible { transform: translateY(0); opacity: 1; }
+
+.site-logo { height: 48px; width: auto; }
+
+.site-header .user-greeting {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  color: var(--clr-text);
+  font-size: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.site-header .admin-link a {
+  color: var(--clr-primary);
+  background: rgba(255,255,255,0.06);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.5rem;
+}
+
+.site-header .admin-link a:hover { opacity: 0.9; }
+
+/* ensure nav doesn't hide under header */
+nav { padding-top: 1.6rem; }
+
+/* Intro animation overlay */
+.intro {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 9999;
+  transition: opacity .6s ease, transform .6s ease;
+}
+
+.intro-logo {
+  width: min(45vw, 420px);
+  max-width: 90%;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(.6) translateY(0);
+  animation: intro-pop 1s ease forwards;
+}
+
+@keyframes intro-pop {
+  0% { opacity: 0; transform: scale(.6) translateY(0); }
+  60% { opacity: 1; transform: scale(1.05) translateY(-6vh); }
+  100% { opacity: 1; transform: scale(1) translateY(-10vh); }
+}
+
+/* When intro is finished hide overlay and show nav */
+.intro.intro-done { opacity: 0; pointer-events: none; transform: translateY(-2vh); }
+nav { visibility: hidden; opacity: 0; transition: opacity .6s ease, visibility .6s; }
+nav.visible { visibility: visible; opacity: 1; }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+nav {  
+  /* region */
+  --r: calc(var(--max-z) * (var(--p) - 1) + var(--z)); 
+  
+  /* normalized [0-1]*/
+  --r-n: calc(
+    (var(--r) - 1) / (var(--max-z) * var(--max-p) - 1)
+  );
+  
+  block-size: min(8rem, 100%);
+  inline-size: min(30rem, 100%);
+
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  
+  perspective: var(--perspective);
+  transform-style: preserve-3d;
+  
+  --dir: 0deg;
+  
+  @media (max-width: 40rem) {
+    writing-mode: sideways-rl;
+    --dir: -90deg;
+  }
+}
+
+
+
+a {  
+  flex: 1;
+  block-size: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  
+  --ts: calc(
+    var(--hover-smoothness) * var(--falloff) +
+    var(--fall-smoothness) * (1 - var(--falloff))
+  );
+  
+  --fs: calc(
+    .1s * var(--falloff,0) +
+    .8s * (1 - var(--falloff,0))
+  );
+  
+  transition: 
+    scale var(--op, .15s),
+    filter var(--fs),
+    transform var(--ts, var(--fall-smoothness)),
+    flex .3s
+  ;
+  
+/*   &:active {
+    scale: 1.05;
+    --op: .05s;
+  } */
+}
+
+
+a {
+  --p-n: calc(var(--i) / (var(--max-p) - 1));
+  --diff: calc(var(--p-n) - var(--r-n));  
+  --u: calc(abs(var(--diff)) / var(--w)); 
+    
+/*   
+  --n: 2; --w: .3;
+  --falloff: pow(clamp(calc(1 - var(--u)), 0, 1), var(--n)); 
+*/
+  
+  --w: .4;
+  --falloff: clamp(calc(0.5 * (1 + cos(min(var(--u), 1) * 180deg))), 0, 1);
+  
+/*   
+  --n: 4; --w: .2; 
+  --falloff: calc(1 / (1 + pow(var(--u), var(--n)))); 
+ */
+  
+  --tilt: calc(clamp(-1,var(--diff) * 5, 1) * var(--falloff) * 70deg);
+  
+  transform: 
+    translateZ(calc(var(--falloff) * var(--hover-intensity)))
+    rotateY(calc(var(--tilt) * cos(var(--dir))))
+    rotateX(calc(var(--tilt) * sin(var(--dir))))
+  ;
+  
+  filter: 
+    brightness(max(.5, var(--falloff, 0) * 1.2))
+    saturate(var(--falloff, 0))
+  ;
+}
+
+.img {
+  background: var(--img);
+  background-color: #fff3;
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  margin-inline: 0.1em;
+}
+
+.hover-zone {
+  position: absolute;
+  inset: 0;
+  inset-inline: -3px;
+  display: flex;
+  z-index: 999;
+  > i {
+    flex: 1;
+    transition: .3s;
+  }
+}
+
+/* update 09/21/25: added click bud */
+
+.hover-zone {
+  &::after {
+    position: absolute;
+    inset: 0;
+  }
+  
+  &:active, 
+  &:hover:not(:has(> i:hover)),
+  a:focus-visible & {
+    &::after {
+      content: '';
+      pointer-events: all;
+      --o: 1;
+    }
+  }
+}
+
+nav:has(.hover-zone:hover):not(:has(i:hover)), nav:has(a:focus-visible) {
+  --z: calc((var(--max-z) + 1) / 2);
+  
+  a:hover, a:focus-visible {
+    flex: 4;
+  }
+}
+/* --- */
+
+/* dbg check */
+label {
+  position: fixed;
+  bottom: 1em;
+/*   right: 0; */
+  cursor: pointer;
+  user-select: none;
+  transition: var(--h, .3s);
+  opacity: .3;
+  display: inline-flex;
+  &:hover {opacity: .5; letter-spacing: 5px; --h: .1s}
+  &::after {
+    content: 'ing..';
+    max-width: var(--ing, 0px);
+    overflow: hidden;
+    display: inherit;
+    interpolate-size: allow-keywords;
+    transition: .3s;
+  }
+  &:has(> :focus-visible) {
+    outline: solid 1px currentColor;
+  }
+  &:has(> :checked) {
+    opacity: 1;
+    --ing: max-content;
+  }
+}
+
+#dbg {
+/*   display: none; */
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* debugging */
+body {
+  nav::before {
+    counter-set: 
+      pic var(--p) 
+      zone var(--z) 
+      region var(--r)
+      region-norm calc(var(--r-n) * 100)
+    ;
+    tab-size: 12;
+    content: 
+      'debug:'
+      "\a r: " counter(region)
+          "\9(" counter(region-norm) "%)"
+      "\ap: " counter(pic) 
+      "\9z: " counter(zone)
+    ;
+    white-space: pre-wrap;
+    writing-mode: horizontal-tb;
+    position: fixed;
+    inset-block-end: -1em;
+    transform: translateY(100%);
+    opacity: 0;
+    font-size: .5em;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  
+  /* item debug */
+  .img::before {
+    counter-set: 
+      item var(--i) 
+      falloff calc(var(--falloff, 0) * 100)
+      diff calc(var(--diff, 0) * 100)
+    ;
+
+    content: 
+      "\a i: " counter(item)
+      "\a d:" counter(diff)
+      "\a f: " counter(falloff) "%"
+    ;
+    font-size: .5em;
+    white-space: pre;
+    position: fixed;
+    inset-block-end: 100%;
+    opacity: .0;
+    transition: .3s;
+    transition-delay: calc(var(--i) * 25ms);
+    pointer-events: none;
+    block-size: 0px;
+    interpolate-size: allow-keywords;    
+    overflow: hidden;
+  }
+  
+  .hover-zone::after{
+    font-size: 0.5em;
+    text-align: center;
+    align-content: center;
+    background: #0005;
+    transition: opacity .5s, letter-spacing var(--h, .3s);
+    opacity: 0;
+    overflow: hidden;
+    writing-mode: sideways-lr;
+    
+    /* when debugging, uses p-e*/
+    pointer-events: none;
+  }
+  
+  .hover-zone:active::after {
+    letter-spacing: 5px;
+    --h: 50ms;
+  }
+  
+  &:has(#dbg:checked) nav {
+    &::before, .img::before{opacity: .3;}
+    .img::before{block-size: auto;}
+    i:nth-child(odd) {background: #0003}
+    i:hover {background: #fff5; transition: 0ms; }
+    a:hover {outline: #fff5 solid 3px}
+    .hover-zone::after {opacity: var(--o, 0); content: 'clicked';}
+  }
+}
+
+/* update 09/21/25: added focus on tab */
+/* ugly defines */
+a {
+  nav:has(:nth-child(01 of &):is(:hover,:focus-visible)) {--p: 01;}
+  nav:has(:nth-child(02 of &):is(:hover,:focus-visible)) {--p: 02;}
+  nav:has(:nth-child(03 of &):is(:hover,:focus-visible)) {--p: 03;}
+  nav:has(:nth-child(04 of &):is(:hover,:focus-visible)) {--p: 04;}
+  nav:has(:nth-child(05 of &):is(:hover,:focus-visible)) {--p: 05;}
+  nav:has(:nth-child(06 of &):is(:hover,:focus-visible)) {--p: 06;}
+  nav:has(:nth-child(07 of &):is(:hover,:focus-visible)) {--p: 07;}
+  nav:has(:nth-child(08 of &):is(:hover,:focus-visible)) {--p: 08;}
+  nav:has(:nth-child(09 of &):is(:hover,:focus-visible)) {--p: 09;}
+  nav:has(:nth-child(10 of &):is(:hover,:focus-visible)) {--p: 10;}
+  nav:has(:nth-child(11 of &):is(:hover,:focus-visible)) {--p: 11;}
+  nav:has(:nth-child(12 of &):is(:hover,:focus-visible)) {--p: 12;}
+  nav:has(:nth-child(13 of &):is(:hover,:focus-visible)) {--p: 13;}
+  nav:has(:nth-child(14 of &):is(:hover,:focus-visible)) {--p: 14;}
+}
+
+i {
+  nav:has(:nth-child(1 of &):hover) {--z: 1;}
+  nav:has(:nth-child(2 of &):hover) {--z: 2;}
+  nav:has(:nth-child(3 of &):hover) {--z: 3;}
+  nav:has(:nth-child(4 of &):hover) {--z: 4;}
+  nav:has(:nth-child(5 of &):hover) {--z: 5;}
+  nav:has(:nth-child(6 of &):hover) {--z: 6;}
+  nav:has(:nth-child(7 of &):hover) {--z: 7;}
+  nav:has(:nth-child(8 of &):hover) {--z: 8;}
+  nav:has(:nth-child(9 of &):hover) {--z: 9;}
+}
+
+/* custom dashboard font */
+@font-face {
+  font-family: 'DashboardCustom';
+  /* moved font into static/fonts/ */
+  src: url('../fonts/Fuente_Dashboard.woff2') format('woff2');
+  font-weight: 200 350;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+/* item title that appears on click */
+.item-title {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  transform: translate(-50%, -10%);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-family: 'DashboardCustom', system-ui, sans-serif;
+  font-size: clamp(.3rem, 0.4vw + .1rem, 0.95rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.item-title.visible {
+  opacity: 1;
+  transform: translate(-50%, 0%);
+  pointer-events: auto;
+}
+
+/* Zoomed state when first clicked: slightly scale and lift above others */
+a.zoomed {
+  transform: translateZ(calc(var(--hover-intensity) * 0.6)) scale(1.05);
+  z-index: 10000;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.zoomed .img {
+  filter: brightness(1.05) saturate(1.05);
+}
+
