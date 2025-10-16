@@ -4,6 +4,6 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda request: redirect('login/', permanent=False)),  # 👈 redirige a /login/
+    path('', lambda request: redirect('login/', permanent=False)),
     path('', include('FE_App.urls')),
 ]

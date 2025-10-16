@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -15,15 +16,15 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, f'Bienvenido {username} 👋')
-            return redirect('dashboard')  # redirige a la página principal
+            messages.success(request, f'Bienvenido {username}')
+            return redirect('dashboard')  # redirige al menu principal
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
 
     return render(request, 'login.html')
 
 def home(request):
-    return HttpResponse("<h1>Bienvenido a Fit Evolution 🏋️</h1><p>Página principal del sistema.</p>")
+    return HttpResponse("<h1>Bienvenido a Fit Evolution</h1><p>Página principal del sistema.</p>")
 
 
 def register_view(request):
@@ -50,3 +51,13 @@ def register_view(request):
 def dashboard(request):
     return render(request, 'dashboard.html')   
 
+def fit_evolution(request):
+    return render(request, 'fit-evolution.html')
+
+
+def logout_view(request):
+    """Cerrar sesión y redirigir al login. Solo acepta POST."""
+    if request.method == 'POST':
+        logout(request)
+        return redirect('login')
+    return redirect('dashboard')
