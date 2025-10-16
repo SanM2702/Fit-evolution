@@ -1,0 +1,52 @@
+/* Layout pantalla dividida */
+.split-screen {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Sección izquierda */
+.section-left {
+    flex: 1;
+    background: url("../images/comida.jpg") no-repeat center center/cover;
+    color: white;
+    padding: 40px;
+    transition: flex 0.5s ease;
+}
+
+/* Sección derecha */
+.section-right {
+    flex: 1;
+    background: url("../images/protee.jpg") no-repeat center center/cover;
+    color: white;
+    padding: 40px;
+    transition: flex 0.5s ease;
+}
+
+/* Hover efecto (se expande la sección al pasar el mouse) */
+.section-left:hover, .section-right:hover {
+    flex: 1.2;
+}
+
+.title-link {
+    text-decoration: none; /* quitar subrayado */
+    color: white; /* texto blanco */
+    transition: transform 0.4s ease, color 0.4s ease;
+}
+
+.title-link:hover {
+    transform: scale(1.1); /* efecto de agrandar */
+    color: #432202; /* color amarillo suave al pasar el mouse */
+}
+
+.title-link2 {
+    text-decoration: none; /* quitar subrayado */
+    color: white; /* texto blanco */
+    transition: transform 0.4s ease, color 0.4s ease;
+}
+
+.title-link2:hover {
+    transform: scale(1.1); /* efecto de agrandar */
+    color: #8c8157; /* color amarillo suave al pasar el mouse */
+}
