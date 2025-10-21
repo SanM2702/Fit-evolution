@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-vmrzyyfrf00&rhi-l6m8h2x(c8r^)c!3ioab+z(6l54+3)sv36
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['fit-evolution.onrender.com']
 
 
 # Application definition
