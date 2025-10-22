@@ -64,8 +64,9 @@ body {
 
 .site-header .admin-link a {
   color: var(--clr-primary);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0);
   padding: 0.2rem 0.45rem;
+  margin: 0%;
   border-radius: 4px;
   text-decoration: none;
   font-size: 0.5rem;

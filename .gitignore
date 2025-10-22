@@ -1,0 +1,32 @@
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de entorno
+.env
+*.env
+
+# Base de datos local
+db.sqlite3
+
+# Archivos de logs
+*.log
+
+# Archivos temporales
+*.pot
+*.pyc
+
+# Archivos de compilación
+*.egg-info/
+*.egg/
+dist/
+build/
+
+# Configuración de IDE
+.vscode/
+.idea/
+
+# Archivos de Django
+staticfiles/
+media/  

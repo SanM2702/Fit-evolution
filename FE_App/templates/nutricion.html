@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Evolution - Nutrición</title>
+    <link rel="stylesheet" href="../static/css/nutricion.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=BBH+Sans+Bartle&family=Edu+NSW+ACT+Cursive:wght@400..700&family=Edu+QLD+Hand:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="bg-radial"></div>
+    <header class="navbar animate-on-load">
+        <div class="logo">FIT EVOLUTION</div>
+        <nav class="nav-links">
+            <button class="btn" onclick="location.href='{% url 'menu-nutricion' %}'">Home</button>
+            <button class="btn" onclick="location.href='#seccion2'">Quenes somos</button>
+            <button class="btn" onclick="location.href='#seccion3'">Perfil</button>
+            <button class="btn" onclick="location.href='#seccion4'">Ejercicios</button>
+        </nav>
+    </header>
+    <main>
+        <section id="seccion1" class="personal-section animate-on-load">
+            <div class="cube-title-container">
+                <span class="cube-title cube-title-front">RECOMENDACIÓN NUTRICIONAL</span>
+                <span class="cube-title cube-title-back">JUAN LUGO</span>
+            </div>
+            <div class="profile-card spotlight-card">
+                <div class="spotlight-bg"></div>
+                <div style="display: flex; flex-direction: row; gap: 2rem; align-items: flex-start;">
+                    <div class="profile-info" style="flex: 1; position: relative;">
+                    <p class="profile-name"><strong>Tu ficha Fitt </strong></p>
+                    <div class="profile-row">
+                        <img src="../static/icons/levantamiento-de-pesas.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Objetivo:</strong> Ganar masa muscular</span>
+                    </div>
+                    <div class="profile-row">
+                        <img src="../static/icons/pastel-de-cumpleanos.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Edad:</strong> 22</span>
+                    </div>
+                    <div class="profile-row">
+                        <img src="../static/icons/capacitacion.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Peso:</strong> 75 kg</span>
+                    </div>
+                    <div class="profile-row">
+                        <img src="../static/icons/altura.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Altura:</strong> 1.82 m</span>
+                    </div>
+                    <div class="profile-row">
+                        <img src="../static/icons/flama-de-fuego.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Nivel de actividad:</strong> Alto</span>
+                    </div>
+                    <div class="profile-row">
+                        <img src="../static/icons/calendario.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Días de entrenamiento:</strong> 5 días/semana</span>
+                    </div>
+                    <div class="profile-row" style="align-items: right;">
+                        <img src="../static/icons/aptitud-fisica.png" alt="icono" class="profile-icon" width="32" height="32">
+                        <span><strong>Tipo de entrenamiento:</strong> Fuerza</span>
+                    </div>
+                    </div>
+                    <div class="card">
+                        <div class="card__content">
+                            <img src="../static/images/dantt.jpg" alt="Imagen card" class="card-img" />
+                        </div>
+                    </div>
+                    <div class="edit-btn-absolute">
+                        <button class="Btn">Editar
+                            <svg class="svg" viewBox="0 0 512 512">
+                                <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div style="font-size:0.9rem; margin-top:0.5rem;">
+            </div>
+            <div class="recommendations">
+                <h3>Para alcanzar tus objetivos 🔥</h3>
+                <ul>
+                    <li><strong>Calorías diarias:</strong> 2800 kcal</li>
+                    <li><strong>Proteínas:</strong> 150 g</li>
+                    <li><strong>Carbohidratos:</strong> 350 g</li>
+                    <li><strong>Grasas:</strong> 70 g</li>
+                    <li><strong>Alimentos sugeridos:</strong> Pollo, arroz integral, aguacate, huevos, avena, frutos secos</li>
+                </ul>
+            </div>
+        </section>
+    <section id="seccion3" class="extra-section animate-on-load">
+            <h2>Sección 3</h2>
+            <p>Contenido adicional para futuras funcionalidades.</p>
+        </section>
+    <section id="seccion4" class="extra-section animate-on-load">
+            <h2>Sección 4</h2>
+            <p>Más información o módulos que se agregarán en el futuro.</p>
+        </section>
+    </main>
+    <script>
+        // Fondo animado
+        window.addEventListener('DOMContentLoaded', () => {
+            const bg = document.getElementById('bg-radial');
+            // Pequeño retraso para hacerlo más cinematográfico
+            setTimeout(() => {
+                bg.classList.add('visible');
+            }, 1000); // pequeño retraso para el efecto
+        });
+        // Animación de entrada para los elementos principales
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.animate-on-load').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('animated-in');
+                }, 200 + i * 200);
+            });
+        });
+        // Animación de cubo girando en el título
+        const cubeContainer = document.querySelector('.cube-title-container');
+        let cubeFlipped = false;
+        setInterval(() => {
+            cubeFlipped = !cubeFlipped;
+            if (cubeFlipped) {
+                cubeContainer.classList.add('flipped');
+            } else {
+                cubeContainer.classList.remove('flipped');
+            }
+        }, 6000);
+        // JS para el menú desplegable tipo acordeón
+        document.querySelectorAll('.accordion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

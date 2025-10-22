@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NUTRICION</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/MenuNutricion.css">
+</head>
+<body>
+
+    <div class="split-screen">
+
+        <!-- Sección izquierda -->
+        <div class="section-left d-flex flex-column justify-content-center align-items-center text-center">
+            <a href="{% url 'nutricioninfo' %}" class="title-link">
+                <h1 class="mb-3">¿Porque es importante</h1>
+                <h1 class="mb-3">la nutrición?</h1>
+            </a>
+        </div>
+        <!-- Sección derecha -->
+        <div class="section-right d-flex flex-column justify-content-center align-items-center text-center">
+            <a href="{% url 'nutricion' %}" class="title-link2">
+                <h1 class="mb-3">Mi plan Nutricional</h1>
+            </a>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

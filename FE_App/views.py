@@ -54,6 +54,14 @@ def dashboard(request):
 def fit_evolution(request):
     return render(request, 'fit-evolution.html')
 
+def menu_nutricion(request):
+    return render(request, 'MenuNutricion.html')
+
+def nutricion(request):
+    return render(request, 'nutricion.html')
+
+def nutricioninfo(request):
+    return render(request, 'nutricioninfo.html')
 
 def logout_view(request):
     """Cerrar sesión y redirigir al login. Solo acepta POST."""
