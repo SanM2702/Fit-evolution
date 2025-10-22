@@ -17,7 +17,7 @@
     <header class="navbar animate-on-load">
         <div class="logo">FIT EVOLUTION</div>
         <nav class="nav-links">
-            <button class="btn" onclick="location.href='MenuNutricion.html'">Home</button>
+            <button class="btn" onclick="location.href='{% url 'menu-nutricion' %}'">Home</button>
             <button class="btn" onclick="location.href='#seccion2'">Quenes somos</button>
             <button class="btn" onclick="location.href='#seccion3'">Perfil</button>
             <button class="btn" onclick="location.href='#seccion4'">Ejercicios</button>
@@ -89,29 +89,6 @@
                     <li><strong>Grasas:</strong> 70 g</li>
                     <li><strong>Alimentos sugeridos:</strong> Pollo, arroz integral, aguacate, huevos, avena, frutos secos</li>
                 </ul>
-            </div>
-        </section>
-    <section id="seccion2" class="general-section animate-on-load">
-            <h2>Información Nutricional General</h2>
-            <div class="accordion">
-                <div class="accordion-item">
-                    <button class="accordion-btn">Tema 1: Hidratación</button>
-                    <div class="accordion-content">
-                        <p>Beber al menos 2 litros de agua al día ayuda a mantener el metabolismo y la salud general.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <button class="accordion-btn">Tema 2: Macronutrientes</button>
-                    <div class="accordion-content">
-                        <p>Los macronutrientes principales son proteínas, carbohidratos y grasas. Cada uno cumple funciones esenciales en el cuerpo.</p>
-                    </div>
-                </div>
-                <div class="accordion-item">
-                    <button class="accordion-btn">Tema 3: Frecuencia de comidas</button>
-                    <div class="accordion-content">
-                        <p>Comer 4-5 veces al día puede ayudar a mantener la energía y controlar el apetito.</p>
-                    </div>
-                </div>
             </div>
         </section>
     <section id="seccion3" class="extra-section animate-on-load">

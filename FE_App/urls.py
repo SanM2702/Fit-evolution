@@ -2,7 +2,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),  # 👈 Ruta principal
-    path('login/', views.login_view, name='login'),  # si ya tienes el login
+    path('', views.home, name='home'),  
+    path('login/', views.login_view, name='login'),  
+    path('register/', views.register_view, name='register'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('fit-evolution/', views.fit_evolution, name='fit-evolution'), 
+    path('menu-nutricion/', views.menu_nutricion, name='menu-nutricion'),
+    path('nutricioninfo/', views.nutricioninfo, name='nutricioninfo'),
+    path('nutricion/', views.nutricion, name='nutricion'),
+    path('logout/', views.logout_view, name='logout'),
 ]

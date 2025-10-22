@@ -3,7 +3,7 @@
 body {
     margin: 0;
     font-family: 'Montserrat', sans-serif;
-    background-image: url("../images/Login_Background2.jpg");
+    background-image: url("../images/Login_Background2.png");
     background-size: cover;
     background-position: center;
     height: 100vh;
@@ -106,4 +106,15 @@ input {
 
 .error-message.error {
     background: rgba(255, 0, 0, 0.14);
+}
+
+/* Field-level error */
+.field-error {
+    color: #ffdede;
+    background: rgba(255, 0, 0, 0.06);
+    border-left: 3px solid rgba(255,0,0,0.35);
+    padding: 8px;
+    margin-top: 6px;
+    border-radius: 6px;
+    font-size: 13px;
 }
