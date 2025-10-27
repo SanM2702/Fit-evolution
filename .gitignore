@@ -40,3 +40,23 @@ Thumbs.db
 # Archivos de compilación o estáticos generados
 staticfiles/
 media/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Base de datos local
+db.sqlite3
+
+# Archivos temporales
+*.log
+*.pot
+*.pyproj
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de entorno virtual
+venv/
+env/
+.env/
