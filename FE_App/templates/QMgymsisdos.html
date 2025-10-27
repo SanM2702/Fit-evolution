@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>¿Por que lo hacemos?</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/MenuQSomos.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+		<noscript><link rel="stylesheet" href="{% static 'css/noscript.css' %}"/></noscript>
+	</head>
+
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+				<!-- Note: The "styleN" class below should match that of the banner element. -->
+					<header id="header" class="alt style2">
+						<a href="{% url 'dashboard' %}" class="logo"><strong>FIT</strong> <span>EVOLUTION</span></a>
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<ul class="links">
+							<li><a href="{% url 'fit-evolution' %}">Home</a></li>
+							<li><a href="{% url 'QSgymsisuno' %}">Quienes Somos</a></li>
+							<li><a href="{% url 'MenuNutricion' %}">Nutricion</a></li>
+							<li><a href="{% url 'ver_perfil' %}">Entrenamiento</a></li>
+						</ul>
+						<ul class="actions stacked">
+							<li><a href="#" class="button primary fit">Get Started</a></li>
+							<li><a href="#" class="button fit">Log In</a></li>
+						</ul>
+					</nav>
+
+				<!-- Banner -->
+				<!-- Note: The "styleN" class below should match that of the header element. -->
+					<section id="banner" class="style2">
+						<div class="inner">
+							<span class="image">
+								<img src="{% static 'images/backgymsis21.jpg' %}" alt="" />
+							</span>
+							<header class="major">
+								<h1> Historia tras la creacion de Fit-Evolution </h1>
+							</header>
+							<div class="content">
+								<p> </p>
+							</div>
+						</div>
+					</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- One -->
+							<section id="one">
+								<div class="inner">
+									<header class="major">
+										<h2>¿Por que?</h2>
+									</header>
+									<p>Esta idea nace de una necesidad detectada, Hoy en día, muchas personas entrenan sin una guía real adaptada a su progreso.
+                                        Las aplicaciones de fitness más populares ofrecen planes genéricos y estáticos, lo que genera estancamiento,
+                                        y poca motivacion ya que se suelen sentir muy perdidos al momento de llevar sus
+                                        entrenamientos, y planes nutricionales, y al saber que cada persona es diferente y tiene experincias
+                                       diferentes, un buen entrenador debe adaptar un plan de entrenamiento y de nutricion especializado para cada persona.  </p>
+								</div>
+							</section>
+
+						<!-- Two -->
+							<section id="two" class="spotlights">
+								<section>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis22.png' %}" alt="" data-position="center center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>Nuestra motivación</h3>
+											</header>
+											<p>Como apasionados del entrenamiento y la tecnología, creemos que cada cuerpo es único y merece un acompañamiento que evolucione con él.
+                                                Queremos que los usuarios aprendan a entrenar de forma más inteligente, evitando frustraciones y desconocimiento</p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis23.png' %}" alt="" data-position="top center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>Impacto que buscamos</h3>
+											</header>
+											<p>Queremos democratizar el acceso a la asesoría profesional, ayudando a que más personas:
+                                            Entrenen de manera consciente, Mejoren su salud física y mental y
+                                            Disfruten de su progreso con acompañamiento inteligente.</p>
+									</div>
+								</section>
+							</section>
+
+						<!-- Three -->
+							<section id="three">
+								<div class="inner">
+                                    <header class="major">
+										<h3>Nuestra ideologia</h3>
+									</header>
+									<p>
+                                    Fit-Evolution no da órdenes, enseña. Cada recomendación viene acompañada
+                                    de una explicación que ayuda al usuario a comprender el porqué de cada
+                                    ajuste, fomentando el aprendizaje y la autonomía en su proceso de
+                                    entrenamiento.
+                                    </p>
+									<ul class="actions">
+										<li><a href="#banner" class="button next">Volver al banner</a></li>
+									</ul>
+								</div>
+							</section>
+
+					</div>
+
+				<!-- Contact -->
+					<section id="contact">
+						<div class="inner">
+							<section>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<label for="name">Name</label>
+											<input type="text" name="name" id="name" />
+										</div>
+										<div class="field half">
+											<label for="email">Email</label>
+											<input type="text" name="email" id="email" />
+										</div>
+										<div class="field">
+											<label for="message">Message</label>
+											<textarea name="message" id="message" rows="6"></textarea>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send Message" class="primary" /></li>
+										<li><input type="reset" value="Clear" /></li>
+									</ul>
+								</form>
+							</section>
+							<section class="split">
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-envelope"></span>
+										<h3>Email</h3>
+										<a href="#">juanmet1234@gmail.com</a>
+									</div>
+								</section>
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-phone"></span>
+										<h3>Phone</h3>
+										<span>3195422552</span>
+									</div>
+								</section>
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-home"></span>
+										<h3>Address</h3>
+										<span>1234 Somewhere Road #5432<br />
+										Nashville, TN 00000<br />
+										United States of America</span>
+									</div>
+								</section>
+							</section>
+						</div>
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<div class="inner">
+							<ul class="icons">
+								<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+							</ul>
+							<ul class="copyright">
+								<li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
+							</ul>
+						</div>
+					</footer>
+
+			</div>  
+		<!-- Scripts -->
+			<script src="{% static 'js/jqueryqs.min.js' %}"></script>
+			<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'js/browserqs.min.js' %}"></script>
+			<script src="{% static 'js/breakpointsqs.min.js' %}"></script>
+			<script src="{% static 'js/utilqs.js' %}"></script>
+			<script src="{% static 'js/mainqs.js' %}"></script>
+
+	</body>
+</html>

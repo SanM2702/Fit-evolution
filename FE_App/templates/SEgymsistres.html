@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Secuencia de entrenamiento</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/MenuQSomos.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+		<noscript><link rel="stylesheet" href="{% static 'css/noscript.css' %}"/></noscript>
+	</head>
+
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+				<!-- Note: The "styleN" class below should match that of the banner element. -->
+					<header id="header" class="alt style2">
+						<a href="{% url 'dashboard' %}" class="logo"><strong>FIT</strong> <span>EVOLUTION</span></a>
+						<nav>
+							<a href="#menu">Menu</a>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<nav id="menu">
+						<ul class="links">
+							<li><a href="{% url 'fit-evolution' %}">Home</a></li>
+							<li><a href="{% url 'QSgymsisuno' %}">Quienes Somos</a></li>
+							<li><a href="{% url 'MenuNutricion' %}">Nutricion</a></li>
+							<li><a href="{% url 'ver_perfil' %}">Entrenamiento</a></li>
+						</ul>
+						<ul class="actions stacked">
+							<li><a href="#" class="button primary fit">Get Started</a></li>
+							<li><a href="#" class="button fit">Log In</a></li>
+						</ul>
+					</nav>
+
+				<!-- Banner -->
+				<!-- Note: The "styleN" class below should match that of the header element. -->
+					<section id="banner" class="style2">
+						<div class="inner">
+							<span class="image">
+								<img src="{% static 'images/backgymsis31.jpg' %}" alt="" />
+							</span>
+							<header class="major">
+								<h1>pilares para lograr tus objetivos  </h1>
+							</header>
+						</div>
+					</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- One -->
+							<section id="one">
+								<div class="inner">
+									<header class="major">
+										<h2>Debes tener en cuenta que...</h2>
+									</header>
+									<p> 
+
+                                    </p>
+								</div>
+							</section>
+
+						<!-- Two -->
+							<section id="two" class="spotlights">
+								<section>
+									<a href="generic.html" class="image">
+                                        <br>
+										<img src="{% static 'images/gymsis32.png' %}" alt="" data-position="center center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>NUTRICION</h3>
+											</header>
+											<p>
+                                                Tu cuerpo no mejora en el gimnasio, mejora con lo que le das después.
+                                                Consume suficientes calorías y macronutrientes (proteínas, carbohidratos y grasas) según tu objetivo
+                                                    (superávit para volumen, déficit para definición). <br>
+                                                    Prioriza proteínas (1.6–2.2 g/kg) para mantener y construir músculo, o temas a los carbohidratos: son el combustible del rendimiento. <br>
+                                                    Hidratación constante = mejor fuerza y recuperación.  
+                                                </p>
+										</div>
+									</div>
+								</section>
+								<section>
+                                    <br>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis33.png' %}" alt="" data-position="top center" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>ENTRENAMIENTO</h3>
+											</header>
+											<p>
+                                                La base física del progreso.<br>
+                                                -Aplica el principio de sobrecarga progresiva: más peso, repeticiones o control cada semana<br>
+                                                -Trabaja con buena técnica y rango completo.Divide tus sesiones por grupos musculares o patrones de movimiento.<br>
+                                                -Registra tus entrenamientos para medir el progreso.
+                                            </p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis34.png' %}" alt="" data-position="25% 25%" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>RECUPERACIÓN</h3>
+											</header>
+											<p>
+                                                Sin descanso, no hay crecimiento. Por lo cual debes
+                                                dormir de 7–9 horas por noche, esto mejora la síntesis proteica y las hormonas anabólicas, ademas
+                                                se recomienda alterna días intensos con días ligeros o descanso activo,
+                                                el sobreentrenamiento no te hace fuerte, la recuperación sí.
+                                            </p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis35.png' %}" alt="" data-position="25% 25%" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>BALANCE Y CONSISTENCIA</h3>
+											</header>
+											<p>
+                                                Aquí entra lo mental y lo emocional. <br>
+                                                -Sé constante: los resultados vienen con el tiempo, no con la perfección. <br>
+                                                -No te compares; compite contigo mismo. <br>
+                                                -Disfruta el proceso y celebra los pequeños logros. <br>
+                                                -Mantén equilibrio entre el gym, tu vida social y tu bienestar. 
+                                            </p>
+										</div>
+									</div>
+								</section>
+								<section>
+									<a href="generic.html" class="image">
+										<img src="{% static 'images/gymsis36.png' %}" alt="" data-position="25% 25%" />
+									</a>
+									<div class="content">
+										<div class="inner">
+											<header class="major">
+												<h3>EVALUACION Y AJUSTE INTELIGENTE</h3>
+											</header>
+											<p>
+                                                Nada es estático: tu cuerpo cambia, y tu plan también debe hacerlo. <br>
+                                                -Revisa tu progreso cada 4–6 semanas. <br>
+                                                -Ajusta calorías, entrenamiento o descanso según tus métricas (peso, fuerza, energía). <br>
+                                                -Aprende de los datos: entrena inteligente, no solo duro.
+                                            </p>
+										</div>
+									</div>
+								</section>
+							</section>
+
+						<!-- Three -->
+							<section id="three">
+								<div class="inner">
+									<header class="major">
+										<h2>¡Gymbro!</h2>
+									</header>
+									<p>
+                                    Si sigues estos pasos, veras reflejado tu esfuerzo, con un cuerpo Y
+                                    una mente mas sana y fuerte
+                                    </p>
+									<ul class="actions">
+										<li><a href="#banner" class="button next">Volver al banner</a></li>
+									</ul>
+								</div>
+							</section>
+
+					</div>
+
+				<!-- Contact -->
+					<section id="contact">
+						<div class="inner">
+							<section>
+								<form method="post" action="#">
+									<div class="fields">
+										<div class="field half">
+											<label for="name">Name</label>
+											<input type="text" name="name" id="name" />
+										</div>
+										<div class="field half">
+											<label for="email">Email</label>
+											<input type="text" name="email" id="email" />
+										</div>
+										<div class="field">
+											<label for="message">Message</label>
+											<textarea name="message" id="message" rows="6"></textarea>
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send Message" class="primary" /></li>
+										<li><input type="reset" value="Clear" /></li>
+									</ul>
+								</form>
+							</section>
+							<section class="split">
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-envelope"></span>
+										<h3>Email</h3>
+										<a href="#">juanmet1234@gmail.com</a>
+									</div>
+								</section>
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-phone"></span>
+										<h3>Phone</h3>
+										<span>3195422552</span>
+									</div>
+								</section>
+								<section>
+									<div class="contact-method">
+										<span class="icon solid alt fa-home"></span>
+										<h3>Address</h3>
+										<span>1234 Somewhere Road #5432<br />
+										Nashville, TN 00000<br />
+										United States of America</span>
+									</div>
+								</section>
+							</section>
+						</div>
+					</section>
+
+				<!-- Footer -->
+					<footer id="footer">
+						<div class="inner">
+							<ul class="icons">
+								<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+								<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+								<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								<li><a href="#" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+							</ul>
+							<ul class="copyright">
+								<li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
+							</ul>
+						</div>
+					</footer>
+
+			</div>  
+		<!-- Scripts -->
+			<script src="{% static 'js/jqueryqs.min.js' %}"></script>
+			<script src="{% static 'js/jquery.scrolly.min.js' %}"></script>
+			<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'js/browserqs.min.js' %}"></script>
+			<script src="{% static 'js/breakpointsqs.min.js' %}"></script>
+			<script src="{% static 'js/utilqs.js' %}"></script>
+			<script src="{% static 'js/mainqs.js' %}"></script>
+
+	</body>
+</html>

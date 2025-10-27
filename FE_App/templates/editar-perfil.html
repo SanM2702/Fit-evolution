@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Fit Evolution</title>
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Botón de regreso -->
+        <a href="{% url 'ver_perfil' %}" class="back-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver al Perfil
+        </a>
+
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="header-content">
+                    <h1>Editar Tu Perfil</h1>
+                    <p class="subtitle">Actualiza tu información personal y de entrenamiento</p>
+                </div>
+                <div class="header-logo">
+                    <img src="{% static 'images/logo.svg' %}" alt="Fit Evolution Logo" class="logo-img">
+                </div>
+            </div>
+
+            <!-- Mensajes -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Formulario de edición -->
+            <form method="post" enctype="multipart/form-data" class="profile-form edit-form">
+                {% csrf_token %}
+
+                <!-- Sección: Foto de Perfil -->
+                <div class="photo-upload-section">
+                    <h2 class="section-title">Foto de Perfil</h2>
+                    <div class="photo-upload-container">
+                        <div class="current-photo">
+                            {% if profile.foto_perfil %}
+                                <img src="{{ profile.foto_perfil.url }}" alt="Foto actual" id="photoPreview">
+                            {% else %}
+                                <div class="photo-placeholder" id="photoPreview">
+                                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="{{ form.foto_perfil.id_for_label }}">{{ form.foto_perfil.label }}</label>
+                            {{ form.foto_perfil }}
+                            <small class="form-text">Formatos aceptados: JPG, PNG, GIF (máx. 5MB)</small>
+                            {% if form.foto_perfil.errors %}
+                                <span class="error">{{ form.foto_perfil.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Datos Personales -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Datos Personales
+                    </h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.edad.id_for_label }}">{{ form.edad.label }}</label>
+                            {{ form.edad }}
+                            {% if form.edad.errors %}
+                                <span class="error">{{ form.edad.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.sexo.id_for_label }}">{{ form.sexo.label }}</label>
+                            {{ form.sexo }}
+                            {% if form.sexo.errors %}
+                                <span class="error">{{ form.sexo.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.peso.id_for_label }}">{{ form.peso.label }}</label>
+                            {{ form.peso }}
+                            {% if form.peso.errors %}
+                                <span class="error">{{ form.peso.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.altura.id_for_label }}">{{ form.altura.label }}</label>
+                            {{ form.altura }}
+                            {% if form.altura.errors %}
+                                <span class="error">{{ form.altura.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.imc.id_for_label }}">{{ form.imc.label }}</label>
+                        {{ form.imc }}
+                        {% if form.imc.errors %}
+                            <span class="error">{{ form.imc.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Sección: Datos de Entrenamiento -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        Datos de Entrenamiento
+                    </h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.nivel_actividad.id_for_label }}">{{ form.nivel_actividad.label }}</label>
+                            {{ form.nivel_actividad }}
+                            {% if form.nivel_actividad.errors %}
+                                <span class="error">{{ form.nivel_actividad.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.objetivo.id_for_label }}">{{ form.objetivo.label }}</label>
+                            {{ form.objetivo }}
+                            {% if form.objetivo.errors %}
+                                <span class="error">{{ form.objetivo.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.porcentaje_grasa.id_for_label }}">{{ form.porcentaje_grasa.label }}</label>
+                            {{ form.porcentaje_grasa }}
+                            {% if form.porcentaje_grasa.errors %}
+                                <span class="error">{{ form.porcentaje_grasa.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.tiempo_entrenamiento.id_for_label }}">{{ form.tiempo_entrenamiento.label }}</label>
+                            {{ form.tiempo_entrenamiento }}
+                            {% if form.tiempo_entrenamiento.errors %}
+                                <span class="error">{{ form.tiempo_entrenamiento.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="form-actions">
+                    <a href="{% url 'ver_perfil' %}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Calcular IMC automáticamente
+        const pesoInput = document.getElementById('id_peso');
+        const alturaInput = document.getElementById('id_altura');
+        const imcInput = document.getElementById('id_imc');
+
+        function calcularIMC() {
+            const peso = parseFloat(pesoInput.value);
+            const altura = parseFloat(alturaInput.value);
+            
+            if (peso && altura && altura > 0) {
+                const alturaMetros = altura / 100;
+                const imc = peso / (alturaMetros * alturaMetros);
+                imcInput.value = imc.toFixed(2);
+            }
+        }
+
+        if (pesoInput && alturaInput && imcInput) {
+            pesoInput.addEventListener('input', calcularIMC);
+            alturaInput.addEventListener('input', calcularIMC);
+        }
+
+        // Preview de foto
+        const fotoInput = document.getElementById('id_foto_perfil');
+        const photoPreview = document.getElementById('photoPreview');
+
+        if (fotoInput) {
+            fotoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (photoPreview.tagName === 'IMG') {
+                            photoPreview.src = e.target.result;
+                        } else {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = 'Preview';
+                            photoPreview.parentNode.replaceChild(img, photoPreview);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Animación de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.profile-form');
+            form.style.opacity = '0';
+            form.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                form.style.transition = 'all 0.5s ease';
+                form.style.opacity = '1';
+                form.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

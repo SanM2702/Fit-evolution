@@ -1,32 +1,42 @@
-# Archivos de Python
+# Archivos del sistema
 __pycache__/
 *.py[cod]
-*.pyo
-
-# Archivos de entorno
-.env
-*.env
-
-# Base de datos local
-db.sqlite3
-
-# Archivos de logs
 *.log
-
-# Archivos temporales
 *.pot
 *.pyc
+*.pyo
+*.pyd
 
-# Archivos de compilación
-*.egg-info/
-*.egg/
-dist/
-build/
+# Archivos de base de datos
+db.sqlite3
 
-# Configuración de IDE
+# Entornos virtuales
+env/
+venv/
+ENV/
+.Venv/
+.venv/
+env.bak/
+
+# Configuración de VS Code y otros editores
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
 
-# Archivos de Django
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Archivos de migración si quieres ignorarlos (opcional)
+# **/migrations/
+
+# Archivos de compilación o estáticos generados
 staticfiles/
-media/  
+media/
