@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'FE_App',
     'Usuarios',
+    'ML_Nutricion',
 ]
 
 MIDDLEWARE = [
