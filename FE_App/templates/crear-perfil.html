@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Perfil - Fit Evolution</title>
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="header-content">
+                    <h1>Crear Tu Perfil</h1>
+                    <p class="subtitle">Completa tu información para personalizar tu experiencia</p>
+                </div>
+                <div class="header-logo">
+                    <img src="{% static 'images/logo.svg' %}" alt="Fit Evolution Logo" class="logo-img">
+                </div>
+            </div>
+
+            <!-- Indicador de pasos -->
+            <div class="steps-indicator">
+                <div class="step {% if step == 1 %}active{% elif step > 1 %}completed{% endif %}">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Datos Personales</div>
+                </div>
+                <div class="step-line {% if step > 1 %}completed{% endif %}"></div>
+                <div class="step {% if step == 2 %}active{% endif %}">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Datos de Entrenamiento</div>
+                </div>
+            </div>
+
+            <!-- Mensajes -->
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Formulario -->
+            <form method="post" class="profile-form" id="profileForm">
+                {% csrf_token %}
+                
+                {% if step == 1 %}
+                    <div class="form-step" id="step1">
+                        <h2 class="step-title">Paso 1: Datos Personales</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.edad.id_for_label }}">{{ form.edad.label }}</label>
+                                {{ form.edad }}
+                                {% if form.edad.errors %}
+                                    <span class="error">{{ form.edad.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.sexo.id_for_label }}">{{ form.sexo.label }}</label>
+                                {{ form.sexo }}
+                                {% if form.sexo.errors %}
+                                    <span class="error">{{ form.sexo.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.peso.id_for_label }}">{{ form.peso.label }}</label>
+                                {{ form.peso }}
+                                {% if form.peso.errors %}
+                                    <span class="error">{{ form.peso.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.altura.id_for_label }}">{{ form.altura.label }}</label>
+                                {{ form.altura }}
+                                {% if form.altura.errors %}
+                                    <span class="error">{{ form.altura.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.imc.id_for_label }}">{{ form.imc.label }}</label>
+                            {{ form.imc }}
+                            {% if form.imc.errors %}
+                                <span class="error">{{ form.imc.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                Siguiente
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% elif step == 2 %}
+                    <div class="form-step" id="step2">
+                        <h2 class="step-title">Paso 2: Datos de Entrenamiento</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.nivel_actividad.id_for_label }}">{{ form.nivel_actividad.label }}</label>
+                                {{ form.nivel_actividad }}
+                                {% if form.nivel_actividad.errors %}
+                                    <span class="error">{{ form.nivel_actividad.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.objetivo.id_for_label }}">{{ form.objetivo.label }}</label>
+                                {{ form.objetivo }}
+                                {% if form.objetivo.errors %}
+                                    <span class="error">{{ form.objetivo.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="{{ form.porcentaje_grasa.id_for_label }}">{{ form.porcentaje_grasa.label }}</label>
+                                {{ form.porcentaje_grasa }}
+                                {% if form.porcentaje_grasa.errors %}
+                                    <span class="error">{{ form.porcentaje_grasa.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="{{ form.tiempo_entrenamiento.id_for_label }}">{{ form.tiempo_entrenamiento.label }}</label>
+                                {{ form.tiempo_entrenamiento }}
+                                {% if form.tiempo_entrenamiento.errors %}
+                                    <span class="error">{{ form.tiempo_entrenamiento.errors.0 }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" name="volver_paso1" class="btn btn-secondary" formnovalidate>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                </svg>
+                                Anterior
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                Crear Perfil
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 6L9 17l-5-5"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Calcular IMC automáticamente
+        const pesoInput = document.getElementById('id_peso');
+        const alturaInput = document.getElementById('id_altura');
+        const imcInput = document.getElementById('id_imc');
+
+        function calcularIMC() {
+            const peso = parseFloat(pesoInput.value);
+            const altura = parseFloat(alturaInput.value);
+            
+            if (peso && altura && altura > 0) {
+                const alturaMetros = altura / 100;
+                const imc = peso / (alturaMetros * alturaMetros);
+                imcInput.value = imc.toFixed(2);
+            }
+        }
+
+        if (pesoInput && alturaInput && imcInput) {
+            pesoInput.addEventListener('input', calcularIMC);
+            alturaInput.addEventListener('input', calcularIMC);
+        }
+
+        // Animación de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const formStep = document.querySelector('.form-step');
+            formStep.style.opacity = '0';
+            formStep.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                formStep.style.transition = 'all 0.5s ease';
+                formStep.style.opacity = '1';
+                formStep.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

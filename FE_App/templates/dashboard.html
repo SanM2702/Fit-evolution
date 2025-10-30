@@ -33,12 +33,12 @@
   </div>
 
   <nav style="--max-p: 6; --max-z: 6;">
-    <a href="{% url 'fit-evolution' %}" style="--i:0; --img:url({% static 'images/Menu_OP1.png' %});" data-title="Fit-Evolution">
+    <a href="{% url 'fit-evolution' %}" style="--i:0; --img:url({% static 'images/Login_Background2.png' %});" data-title="Fit-Evolution">
       <div class="img"></div>
       <h3 class="item-title">Fit-Evolution</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
     </a>
-    <a href="#" style="--i:1; --img:url({% static 'images/Menu_OP2.png' %});" data-title="Perfil">
+    <a href="{% url 'ver_perfil' %}" style="--i:1; --img:url({% static 'images/Menu_OP2.png' %});" data-title="Perfil">
       <div class="img"></div>
       <h3 class="item-title">Perfil</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
@@ -48,7 +48,7 @@
       <h3 class="item-title">Sobrecarga</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
     </a>
-    <a href="{% url 'menu-nutricion' %}" style="--i:3; --img:url({% static 'images/Menu_OP4.png' %});" data-title="Nutricion">
+    <a href="{% url 'MenuNutricion' %}" style="--i:3; --img:url({% static 'images/Menu_OP4.png' %});" data-title="Nutricion">
       <div class="img"></div>
       <h3 class="item-title">Nutricion</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
