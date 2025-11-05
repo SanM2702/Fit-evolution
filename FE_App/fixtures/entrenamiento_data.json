@@ -1,0 +1,267 @@
+[
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 1,
+    "fields": {
+      "nombre_grupo": "Pecho",
+      "descripcion": "Músculos pectorales mayores y menores"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 2,
+    "fields": {
+      "nombre_grupo": "Espalda",
+      "descripcion": "Dorsales, trapecios, romboides"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 3,
+    "fields": {
+      "nombre_grupo": "Piernas",
+      "descripcion": "Cuádriceps, femorales, glúteos"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 4,
+    "fields": {
+      "nombre_grupo": "Hombros",
+      "descripcion": "Deltoides anterior, lateral y posterior"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 5,
+    "fields": {
+      "nombre_grupo": "Bíceps",
+      "descripcion": "Bíceps braquial y braquial anterior"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 6,
+    "fields": {
+      "nombre_grupo": "Tríceps",
+      "descripcion": "Tríceps braquial (cabeza larga, lateral y medial)"
+    }
+  },
+  {
+    "model": "FE_App.grupomuscular",
+    "pk": 7,
+    "fields": {
+      "nombre_grupo": "Abdomen",
+      "descripcion": "Recto abdominal, oblicuos, transverso"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 1,
+    "fields": {
+      "grupo_muscular": 1,
+      "nombre_ejercicio": "Press Banca Plano",
+      "descripcion": "Ejercicio básico para desarrollo de pecho. Mantén los omóplatos retraídos.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 2,
+    "fields": {
+      "grupo_muscular": 1,
+      "nombre_ejercicio": "Press Inclinado con Mancuernas",
+      "descripcion": "Enfocado en pecho superior. Ángulo de 30-45 grados.",
+      "tipo_equipo": "mancuerna",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 3,
+    "fields": {
+      "grupo_muscular": 1,
+      "nombre_ejercicio": "Aperturas en Polea",
+      "descripcion": "Aislamiento de pecho con tensión constante.",
+      "tipo_equipo": "polea",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 4,
+    "fields": {
+      "grupo_muscular": 6,
+      "nombre_ejercicio": "Fondos en Paralelas",
+      "descripcion": "Excelente para tríceps y pecho inferior. Inclínate hacia adelante para más pecho.",
+      "tipo_equipo": "peso_corporal",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 5,
+    "fields": {
+      "grupo_muscular": 6,
+      "nombre_ejercicio": "Press Francés",
+      "descripcion": "Aislamiento de tríceps. Mantén los codos fijos.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 6,
+    "fields": {
+      "grupo_muscular": 2,
+      "nombre_ejercicio": "Dominadas",
+      "descripcion": "Ejercicio fundamental para espalda. Agarre pronado.",
+      "tipo_equipo": "peso_corporal",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 7,
+    "fields": {
+      "grupo_muscular": 2,
+      "nombre_ejercicio": "Remo con Barra",
+      "descripcion": "Desarrollo de espalda media. Mantén la espalda recta.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 8,
+    "fields": {
+      "grupo_muscular": 2,
+      "nombre_ejercicio": "Jalón al Pecho",
+      "descripcion": "Alternativa a dominadas. Enfócate en contraer dorsales.",
+      "tipo_equipo": "polea",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 9,
+    "fields": {
+      "grupo_muscular": 5,
+      "nombre_ejercicio": "Curl con Barra",
+      "descripcion": "Ejercicio básico para bíceps. Evita balancear el cuerpo.",
+      "tipo_equipo": "barra",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 10,
+    "fields": {
+      "grupo_muscular": 5,
+      "nombre_ejercicio": "Curl Martillo",
+      "descripcion": "Trabaja bíceps y braquial anterior.",
+      "tipo_equipo": "mancuerna",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 11,
+    "fields": {
+      "grupo_muscular": 3,
+      "nombre_ejercicio": "Sentadilla con Barra",
+      "descripcion": "Rey de los ejercicios. Mantén el core activado.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 12,
+    "fields": {
+      "grupo_muscular": 3,
+      "nombre_ejercicio": "Prensa de Piernas",
+      "descripcion": "Alternativa segura a sentadillas. Controla el descenso.",
+      "tipo_equipo": "maquina",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 13,
+    "fields": {
+      "grupo_muscular": 3,
+      "nombre_ejercicio": "Peso Muerto Rumano",
+      "descripcion": "Enfocado en femorales y glúteos. Mantén ligera flexión de rodillas.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 14,
+    "fields": {
+      "grupo_muscular": 3,
+      "nombre_ejercicio": "Extensiones de Cuádriceps",
+      "descripcion": "Aislamiento de cuádriceps. Controla el movimiento.",
+      "tipo_equipo": "maquina",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 15,
+    "fields": {
+      "grupo_muscular": 4,
+      "nombre_ejercicio": "Press Militar",
+      "descripcion": "Ejercicio compuesto para hombros. Mantén el core firme.",
+      "tipo_equipo": "barra",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 16,
+    "fields": {
+      "grupo_muscular": 4,
+      "nombre_ejercicio": "Elevaciones Laterales",
+      "descripcion": "Aislamiento de deltoides lateral. No uses impulso.",
+      "tipo_equipo": "mancuerna",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 17,
+    "fields": {
+      "grupo_muscular": 4,
+      "nombre_ejercicio": "Face Pulls",
+      "descripcion": "Excelente para deltoides posterior y salud del hombro.",
+      "tipo_equipo": "polea",
+      "nivel": "intermedio"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 18,
+    "fields": {
+      "grupo_muscular": 7,
+      "nombre_ejercicio": "Plancha Abdominal",
+      "descripcion": "Ejercicio isométrico para core. Mantén el cuerpo alineado.",
+      "tipo_equipo": "peso_corporal",
+      "nivel": "principiante"
+    }
+  },
+  {
+    "model": "FE_App.ejercicio",
+    "pk": 19,
+    "fields": {
+      "grupo_muscular": 7,
+      "nombre_ejercicio": "Crunch en Polea",
+      "descripcion": "Aislamiento de abdomen con resistencia progresiva.",
+      "tipo_equipo": "polea",
+      "nivel": "intermedio"
+    }
+  }
+]
