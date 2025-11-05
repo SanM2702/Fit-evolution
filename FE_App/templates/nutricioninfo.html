@@ -1,7 +1,9 @@
+{% load static %}
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>Dimension by HTML5 UP</title>
+		<title>Ques es la nutrición - FIT EVOLUTION</title>
+		<link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../static/css/nutricioninfo.css" />
@@ -20,16 +22,17 @@
 						<div class="content">
 							<div class="inner">
 								<h1>Fit Evolution</h1>
-								<p>Aqui se pone pq tetrahptas es importante la nutricion para alcanzar los objetivos<br />
+								<p>Cada proceso fisiológico —desde mover un músculo hasta reparar fibras dañadas— depende de los nutrientes y energía que consumes.
+								Si el cuerpo no recibe los macronutrientes (proteínas, carbohidratos, grasas) y micronutrientes (vitaminas, minerales) adecuados, no puede adaptarse al entrenamiento<br />
 								</p>
 							</div>
 						</div>
 						<nav>
 							<ul>
-								<li><a href="#intro">Pollo</a></li>
-								<li><a href="#work">Carne</a></li>
-								<li><a href="#about">Pescado</a></li>
-								<li><a href="#contact">Verduras</a></li>
+								<li><a href="#prote">Proteinas</a></li>
+								<li><a href="#carbos">carbos</a></li>
+								<li><a href="#grasas">Grasas</a></li>
+								<li><a href="#contact">contacto</a></li>
 								<!--<li><a href="#elements">Elements</a></li>-->
 							</ul>
 						</nav>
@@ -38,29 +41,72 @@
 				<!-- Main -->
 					<div id="main">
 
-						<!-- Intro -->
-							<article id="intro">
-								<h2 class="major">Intro</h2>
-								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#work">awesome work</a>.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+						<!-- prote -->
+							<article id="prote">
+								<h2 class="major">Proteinas</h2>
+								<span class="image main"><img src="{% static 'images/prote.jpg' %}" alt="" /></span>
+								<p> Las proteínas son los bloques estructurales de los músculos, órganos y tejidos.
+									Están formadas por aminoácidos, que el cuerpo usa para reparar las fibras musculares que se rompen durante el entrenamiento.</p>
+								<h3>En el fitness: </h3>
+								<p>1. Promueven la hipertrofia (crecimiento muscular). <br>
+								2. Aceleran la recuperación después del ejercicio. <br>
+								3. Previenen la pérdida de músculo durante etapas de déficit calórico (pérdida de grasa). <br>
+								4. Aumentan la saciedad, ayudando a controlar el apetito.</p> <br>
+								
+								<h3>Recomendación general: </h3>
+								<p>
+									1.6 a 2.2 g de proteína por kg de peso corporal al día. <br>
+									Ejemplo: una persona de 70 kg → 110–150 g de proteína diaria.
+								</p>
+								<h3>Fuentes recomendadas: </h3>
+								<p>
+									Pollo, pescado, carne magra, huevos, legumbres, tofu, yogurt griego, proteína en polvo
+								</p> 		
 							</article>
 
-						<!-- Work -->
-							<article id="work">
-								<h2 class="major">Work</h2>
-								<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-								<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-								<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
+						<!-- carbos -->
+							<article id="carbos">
+								<h2 class="major">carbohidratos</h2>
+								<span class="image main"><img src="{% static 'images/carbos.jpg' %}" alt="" /></span>
+								<p> Los carbohidratos son la fuente primaria de energía del cuerpo, especialmente durante el ejercicio intenso.
+									Se almacenan como glucógeno en los músculos y el hígado, y permiten mantener la fuerza y la intensidad durante los entrenamientos.</p>
+								<h3>En el fitness: </h3>
+								<p>
+								1. Mejoran el rendimiento y la resistencia. <br>
+								2. Evitan la fatiga temprana. <br>
+								3. Aceleran la recuperación al reponer glucógeno muscular. <br>
+								4. Permiten entrenar con suficiente intensidad para lograr sobrecarga progresiva.</p> <br>
+								
+								<h3>Recomendación general: </h3>
+								<p>3 a 6 g de carbohidratos por kg de peso corporal, según la intensidad del entrenamiento.
+									Ejemplo: 70 kg → 210–420 g diarios.
+								</p>
+								<h3>Fuentes recomendadas: </h3>
+								<p>
+									Arroz, avena, papa, pasta, frutas, pan integral, legumbres, verduras.
+								</p>  			
 							</article>
-
-						<!-- About -->
-							<article id="about">
-								<h2 class="major">About</h2>
-								<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
-								<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+						<!-- grasas -->
+							<article id="grasas">
+								<h2 class="major">Grasas</h2>
+								<span class="image main"><img src="{% static 'images/grasas.jpg' %}" alt="" /></span>
+								<p> Las grasas son la reserva energética más densa y cumplen un rol vital en la producción hormonal, la absorción de vitaminas
+									(A, D, E, K) y la salud del sistema nervioso.</p>
+								<h3>En el fitness: </h3>
+								<p>
+								1. Mantienen niveles saludables de testosterona y estrógeno, claves para la recuperación y el crecimiento muscular. <br>
+								2. Evitan la fatiga temprana. <br>
+								3. Proveen energía durante entrenamientos de baja intensidad o de larga duración. <br>
+								4. Favorecen el funcionamiento cognitivo y cardiovascular.</p> <br>
+								
+								<h3>Recomendación general: </h3>
+								<p>0.8 a 1.0 g por kg de peso corporal al día.
+									Ejemplo: 70 kg → 55–70 g diarios.
+								<h3>Fuentes recomendadas: </h3>
+								<p>
+									Aguacate, aceite de oliva, frutos secos, semillas, salmón, mantequilla de maní, yema de huevo.
+								</p>  			
 							</article>
-
 						<!-- Contact -->
 							<article id="contact">
 								<h2 class="major">Contact</h2>

@@ -34,8 +34,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Archivos de migración si quieres ignorarlos (opcional)
-# **/migrations/
 
 # Archivos de compilación o estáticos generados
 staticfiles/

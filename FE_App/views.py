@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .forms import CustomUserCreationForm, UserProfileStep1Form, UserProfileStep2Form, UserProfileEditForm
-from .models import UserProfile
+from .forms import CustomUserCreationForm, UserProfileStep1Form, UserProfileStep2Form, UserProfileEditForm, PlanEntrenamientoForm, DiaEntrenamientoForm, DiaEjercicioForm
+from .models import UserProfile, PlanEntrenamiento, DiaEntrenamiento, DiaEjercicio, GrupoMuscular, Ejercicio
+from datetime import date, timedelta
 
 def login_view(request):
     if request.method == 'POST':
@@ -225,3 +226,292 @@ def editar_perfil(request):
         'profile': profile,
     }
     return render(request, 'editar-perfil.html', context)
+
+
+# ==================== VISTAS DE ENTRENAMIENTO ====================
+
+@login_required
+def dashboard_entrenamiento(request):
+    """Vista principal de entrenamiento con datos del usuario y predicciones ML."""
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        messages.warning(request, 'Debes crear tu perfil primero.')
+        return redirect('crear_perfil')
+    
+    # Obtener o crear plan activo del usuario
+    plan_activo = PlanEntrenamiento.objects.filter(
+        usuario=request.user, 
+        estado='activo'
+    ).first()
+    
+    # Si no existe plan, crear uno de ejemplo
+    if not plan_activo:
+        plan_activo = crear_plan_ejemplo(request.user, profile)
+    
+    context = {
+        'profile': profile,
+        'plan': plan_activo,
+        'user': request.user,
+    }
+    return render(request, 'entrenamiento-dashboard.html', context)
+
+
+@login_required
+def ver_plan_entrenamiento(request, plan_id):
+    """Vista detallada del plan de entrenamiento con ejercicios por día."""
+    plan = get_object_or_404(PlanEntrenamiento, id=plan_id, usuario=request.user)
+    
+    # Obtener días de entrenamiento ordenados
+    dias = plan.dias.all().prefetch_related('ejercicios_asignados__ejercicio__grupo_muscular')
+    
+    context = {
+        'plan': plan,
+        'dias': dias,
+    }
+    return render(request, 'plan-detallado.html', context)
+
+
+def crear_plan_ejemplo(usuario, profile):
+    """Crea un plan de entrenamiento de ejemplo para el usuario."""
+    # Crear plan
+    plan = PlanEntrenamiento.objects.create(
+        usuario=usuario,
+        nombre_plan=f"Plan {profile.get_objetivo_display()}",
+        fecha_inicio=date.today(),
+        fecha_fin=date.today() + timedelta(weeks=12),
+        objetivo=profile.objetivo,
+        estado='activo',
+        dias_semana=4,
+        riesgo_lesion=False,  # Datos de ejemplo (futuro: predicción ML)
+        riesgo_estancamiento=False  # Datos de ejemplo (futuro: predicción ML)
+    )
+    
+    # Día 1: Pecho y Tríceps
+    dia1 = DiaEntrenamiento.objects.create(
+        plan=plan,
+        numero_dia=1,
+        nombre_dia="Pecho y Tríceps",
+        descripcion="Enfoque en desarrollo de pecho con trabajo complementario de tríceps"
+    )
+    
+    # Ejercicios del día 1
+    ejercicios_dia1 = [
+        (1, 1, 4, "8-10", 60.0, 2.0),  # Press Banca
+        (2, 2, 4, "10-12", 25.0, 1.5),  # Press Inclinado
+        (3, 3, 3, "12-15", 15.0, 1.0),  # Aperturas
+        (4, 4, 3, "10-12", None, 1.5),  # Fondos
+        (5, 5, 3, "12-15", 30.0, 1.0),  # Press Francés
+    ]
+    
+    for orden, ejercicio_id, series, reps, peso, descanso in ejercicios_dia1:
+        DiaEjercicio.objects.create(
+            dia=dia1,
+            ejercicio_id=ejercicio_id,
+            orden=orden,
+            series=series,
+            repeticiones=reps,
+            peso_sugerido=peso,
+            descanso_minutos=descanso
+        )
+    
+    # Día 2: Espalda y Bíceps
+    dia2 = DiaEntrenamiento.objects.create(
+        plan=plan,
+        numero_dia=3,
+        nombre_dia="Espalda y Bíceps",
+        descripcion="Desarrollo de espalda con énfasis en dorsales y trabajo de bíceps"
+    )
+    
+    ejercicios_dia2 = [
+        (1, 6, 4, "8-10", None, 2.0),  # Dominadas
+        (2, 7, 4, "8-10", 50.0, 2.0),  # Remo con Barra
+        (3, 8, 3, "10-12", 50.0, 1.5),  # Jalón
+        (4, 9, 3, "10-12", 30.0, 1.0),  # Curl Barra
+        (5, 10, 3, "12-15", 12.0, 1.0),  # Curl Martillo
+    ]
+    
+    for orden, ejercicio_id, series, reps, peso, descanso in ejercicios_dia2:
+        DiaEjercicio.objects.create(
+            dia=dia2,
+            ejercicio_id=ejercicio_id,
+            orden=orden,
+            series=series,
+            repeticiones=reps,
+            peso_sugerido=peso,
+            descanso_minutos=descanso
+        )
+    
+    # Día 3: Piernas
+    dia3 = DiaEntrenamiento.objects.create(
+        plan=plan,
+        numero_dia=5,
+        nombre_dia="Piernas Completo",
+        descripcion="Entrenamiento completo de tren inferior"
+    )
+    
+    ejercicios_dia3 = [
+        (1, 11, 4, "8-10", 80.0, 2.5),  # Sentadilla
+        (2, 12, 4, "10-12", 120.0, 2.0),  # Prensa
+        (3, 13, 3, "10-12", 60.0, 2.0),  # Peso Muerto Rumano
+        (4, 14, 3, "12-15", 40.0, 1.0),  # Extensiones
+    ]
+    
+    for orden, ejercicio_id, series, reps, peso, descanso in ejercicios_dia3:
+        DiaEjercicio.objects.create(
+            dia=dia3,
+            ejercicio_id=ejercicio_id,
+            orden=orden,
+            series=series,
+            repeticiones=reps,
+            peso_sugerido=peso,
+            descanso_minutos=descanso
+        )
+    
+    # Día 4: Hombros y Abdomen
+    dia4 = DiaEntrenamiento.objects.create(
+        plan=plan,
+        numero_dia=6,
+        nombre_dia="Hombros y Core",
+        descripcion="Desarrollo de hombros y trabajo de core"
+    )
+    
+    ejercicios_dia4 = [
+        (1, 15, 4, "8-10", 40.0, 2.0),  # Press Militar
+        (2, 16, 4, "12-15", 10.0, 1.0),  # Elevaciones Laterales
+        (3, 17, 3, "15-20", 20.0, 1.0),  # Face Pulls
+        (4, 18, 3, "30-60s", None, 1.0),  # Plancha
+        (5, 19, 3, "15-20", 30.0, 1.0),  # Crunch Polea
+    ]
+    
+    for orden, ejercicio_id, series, reps, peso, descanso in ejercicios_dia4:
+        DiaEjercicio.objects.create(
+            dia=dia4,
+            ejercicio_id=ejercicio_id,
+            orden=orden,
+            series=series,
+            repeticiones=reps,
+            peso_sugerido=peso,
+            descanso_minutos=descanso
+        )
+    
+    return plan
+
+
+@login_required
+def editar_plan_entrenamiento(request, plan_id):
+    """Vista para editar el plan de entrenamiento completo."""
+    plan = get_object_or_404(PlanEntrenamiento, id=plan_id, usuario=request.user)
+    
+    if request.method == 'POST':
+        # Actualizar información básica del plan
+        if 'actualizar_plan' in request.POST:
+            form = PlanEntrenamientoForm(request.POST, instance=plan)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Plan actualizado exitosamente.')
+                return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Agregar nuevo día
+        elif 'agregar_dia' in request.POST:
+            numero_dia = request.POST.get('numero_dia')
+            nombre_dia = request.POST.get('nombre_dia')
+            descripcion = request.POST.get('descripcion', '')
+            
+            if numero_dia and nombre_dia:
+                # Verificar que el día no exista ya
+                if not DiaEntrenamiento.objects.filter(plan=plan, numero_dia=numero_dia).exists():
+                    DiaEntrenamiento.objects.create(
+                        plan=plan,
+                        numero_dia=numero_dia,
+                        nombre_dia=nombre_dia,
+                        descripcion=descripcion
+                    )
+                    messages.success(request, f'Día {nombre_dia} agregado exitosamente.')
+                else:
+                    messages.error(request, 'Ya existe un entrenamiento para ese día.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Eliminar día
+        elif 'eliminar_dia' in request.POST:
+            dia_id = request.POST.get('dia_id')
+            dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
+            dia.delete()
+            messages.success(request, 'Día eliminado exitosamente.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Actualizar día
+        elif 'actualizar_dia' in request.POST:
+            dia_id = request.POST.get('dia_id')
+            dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
+            dia.nombre_dia = request.POST.get('nombre_dia', dia.nombre_dia)
+            dia.descripcion = request.POST.get('descripcion', '')
+            dia.save()
+            messages.success(request, 'Día actualizado exitosamente.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Agregar ejercicio a un día
+        elif 'agregar_ejercicio' in request.POST:
+            dia_id = request.POST.get('dia_id')
+            ejercicio_id = request.POST.get('ejercicio_id')
+            series = request.POST.get('series')
+            repeticiones = request.POST.get('repeticiones')
+            peso_sugerido = request.POST.get('peso_sugerido') or None
+            descanso_minutos = request.POST.get('descanso_minutos')
+            
+            dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
+            
+            # Obtener el siguiente orden disponible
+            ultimo_orden = DiaEjercicio.objects.filter(dia=dia).count()
+            orden = ultimo_orden + 1
+            
+            DiaEjercicio.objects.create(
+                dia=dia,
+                ejercicio_id=ejercicio_id,
+                orden=orden,
+                series=series,
+                repeticiones=repeticiones,
+                peso_sugerido=peso_sugerido,
+                descanso_minutos=descanso_minutos
+            )
+            messages.success(request, 'Ejercicio agregado exitosamente.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Eliminar ejercicio
+        elif 'eliminar_ejercicio' in request.POST:
+            ejercicio_dia_id = request.POST.get('ejercicio_dia_id')
+            ejercicio_dia = get_object_or_404(DiaEjercicio, id=ejercicio_dia_id, dia__plan=plan)
+            ejercicio_dia.delete()
+            messages.success(request, 'Ejercicio eliminado exitosamente.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+        
+        # Actualizar ejercicio
+        elif 'actualizar_ejercicio' in request.POST:
+            ejercicio_dia_id = request.POST.get('ejercicio_dia_id')
+            ejercicio_dia = get_object_or_404(DiaEjercicio, id=ejercicio_dia_id, dia__plan=plan)
+            
+            ejercicio_dia.series = request.POST.get('series', ejercicio_dia.series)
+            ejercicio_dia.repeticiones = request.POST.get('repeticiones', ejercicio_dia.repeticiones)
+            peso = request.POST.get('peso_sugerido')
+            ejercicio_dia.peso_sugerido = peso if peso else None
+            ejercicio_dia.descanso_minutos = request.POST.get('descanso_minutos', ejercicio_dia.descanso_minutos)
+            ejercicio_dia.save()
+            
+            messages.success(request, 'Ejercicio actualizado exitosamente.')
+            return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+    
+    # GET request
+    form_plan = PlanEntrenamientoForm(instance=plan)
+    dias = plan.dias.all().prefetch_related('ejercicios_asignados__ejercicio__grupo_muscular').order_by('numero_dia')
+    
+    # Obtener todos los ejercicios disponibles agrupados por grupo muscular
+    grupos_musculares = GrupoMuscular.objects.all().prefetch_related('ejercicios')
+    
+    context = {
+        'plan': plan,
+        'form_plan': form_plan,
+        'dias': dias,
+        'grupos_musculares': grupos_musculares,
+        'dias_semana': DiaEntrenamiento.DIAS_SEMANA,
+    }
+    return render(request, 'editar-plan.html', context)

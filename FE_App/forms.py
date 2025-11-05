@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-from .models import UserProfile
+from .models import UserProfile, PlanEntrenamiento, DiaEntrenamiento, DiaEjercicio, Ejercicio
 
 User = get_user_model()
 
@@ -162,4 +162,117 @@ class UserProfileEditForm(forms.ModelForm):
             'porcentaje_grasa': 'Porcentaje de Grasa (%)',
             'tiempo_entrenamiento': 'Tiempo de Entrenamiento (min)',
             'foto_perfil': 'Foto de Perfil',
+        }
+
+
+# ==================== FORMULARIOS DE ENTRENAMIENTO ====================
+
+class PlanEntrenamientoForm(forms.ModelForm):
+    """Formulario para editar información básica del plan"""
+    class Meta:
+        model = PlanEntrenamiento
+        fields = ['nombre_plan', 'fecha_inicio', 'fecha_fin', 'objetivo', 'dias_semana', 'estado']
+        widgets = {
+            'nombre_plan': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Plan Hipertrofia 12 semanas'
+            }),
+            'fecha_inicio': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'fecha_fin': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'objetivo': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Objetivo del plan'
+            }),
+            'dias_semana': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1',
+                'max': '7'
+            }),
+            'estado': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+        }
+        labels = {
+            'nombre_plan': 'Nombre del Plan',
+            'fecha_inicio': 'Fecha de Inicio',
+            'fecha_fin': 'Fecha de Fin',
+            'objetivo': 'Objetivo',
+            'dias_semana': 'Días por Semana',
+            'estado': 'Estado del Plan',
+        }
+
+
+class DiaEntrenamientoForm(forms.ModelForm):
+    """Formulario para editar un día de entrenamiento"""
+    class Meta:
+        model = DiaEntrenamiento
+        fields = ['numero_dia', 'nombre_dia', 'descripcion']
+        widgets = {
+            'numero_dia': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'nombre_dia': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Pecho y Tríceps'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 2,
+                'placeholder': 'Descripción del día (opcional)'
+            }),
+        }
+        labels = {
+            'numero_dia': 'Día de la Semana',
+            'nombre_dia': 'Nombre del Día',
+            'descripcion': 'Descripción',
+        }
+
+
+class DiaEjercicioForm(forms.ModelForm):
+    """Formulario para editar un ejercicio dentro de un día"""
+    class Meta:
+        model = DiaEjercicio
+        fields = ['ejercicio', 'orden', 'series', 'repeticiones', 'peso_sugerido', 'descanso_minutos']
+        widgets = {
+            'ejercicio': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'orden': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1'
+            }),
+            'series': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1',
+                'max': '10'
+            }),
+            'repeticiones': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 8-12, 15, 20+'
+            }),
+            'peso_sugerido': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.5',
+                'placeholder': 'Peso en kg (opcional)'
+            }),
+            'descanso_minutos': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.5',
+                'min': '0.5',
+                'max': '10'
+            }),
+        }
+        labels = {
+            'ejercicio': 'Ejercicio',
+            'orden': 'Orden',
+            'series': 'Series',
+            'repeticiones': 'Repeticiones',
+            'peso_sugerido': 'Peso Sugerido (kg)',
+            'descanso_minutos': 'Descanso (minutos)',
         }

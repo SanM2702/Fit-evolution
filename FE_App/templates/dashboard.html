@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Dashboard - Fit Evolution</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
 </head>
 <body>
 
@@ -43,9 +44,9 @@
       <h3 class="item-title">Perfil</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
     </a>
-    <a href="#" style="--i:2; --img:url({% static 'images/Menu_OP3.png' %});" data-title="Sobrecarga">
+    <a href="{% url 'dashboard_entrenamiento' %}" style="--i:2; --img:url({% static 'images/Menu_OP3.png' %});" data-title="Entrenamiento">
       <div class="img"></div>
-      <h3 class="item-title">Sobrecarga</h3>
+      <h3 class="item-title">Entrenamiento</h3>
       <aside class="hover-zone">{% for i in "123456789" %}<i></i>{% endfor %}</aside>
     </a>
     <a href="{% url 'MenuNutricion' %}" style="--i:3; --img:url({% static 'images/Menu_OP4.png' %});" data-title="Nutricion">

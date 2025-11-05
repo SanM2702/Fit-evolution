@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Detallado - FIT EVOLUTION</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            margin-bottom: 20px;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+        }
+
+        /* Day Cards */
+        .days-container {
+            display: grid;
+            gap: 30px;
+        }
+
+        .day-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-header h2 {
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .day-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .day-description {
+            padding: 20px 25px;
+            background: rgba(59, 130, 246, 0.05);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* Exercise Table */
+        .exercises-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .exercises-table thead {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .exercises-table th {
+            padding: 15px;
+            text-align: left;
+            color: #3b82f6;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .exercises-table tbody tr {
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            transition: background 0.2s ease;
+        }
+
+        .exercises-table tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .exercises-table td {
+            padding: 20px 15px;
+        }
+
+        .exercise-order {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .exercise-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .exercise-group {
+            color: #94a3b8;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .exercise-equipment {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.85em;
+            margin-top: 3px;
+        }
+
+        /* Icons */
+        .icon-group {
+            color: #3b82f6;
+            margin-right: 5px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            color: #475569;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .day-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .exercises-table {
+                font-size: 0.9em;
+            }
+
+            .exercises-table th,
+            .exercises-table td {
+                padding: 10px;
+            }
+
+            /* Stack table on mobile */
+            .exercises-table thead {
+                display: none;
+            }
+
+            .exercises-table tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            .exercises-table td {
+                display: block;
+                text-align: left;
+                padding: 10px 15px;
+                border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            }
+
+            .exercises-table td:before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #3b82f6;
+                display: block;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="{% url 'dashboard_entrenamiento' %}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+            <a href="{% url 'editar_plan_entrenamiento' plan.id %}" class="btn-secondary" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
+                <i class="fas fa-edit"></i> Editar Plan
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-clipboard-list"></i> {{ plan.nombre_plan }}</h1>
+            <p>Plan detallado con ejercicios, series y repeticiones</p>
+        </div>
+
+        <!-- Days Container -->
+        <div class="days-container">
+            {% if dias %}
+                {% for dia in dias %}
+                <div class="day-card">
+                    <div class="day-header">
+                        <h2>
+                            <i class="fas fa-calendar-day"></i>
+                            {{ dia.get_numero_dia_display }}
+                            <span class="day-badge">{{ dia.nombre_dia }}</span>
+                        </h2>
+                    </div>
+
+                    {% if dia.descripcion %}
+                    <div class="day-description">
+                        <i class="fas fa-info-circle"></i> {{ dia.descripcion }}
+                    </div>
+                    {% endif %}
+
+                    <table class="exercises-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Ejercicio</th>
+                                <th style="width: 100px;">Series</th>
+                                <th style="width: 120px;">Repeticiones</th>
+                                <th style="width: 120px;">Peso (kg)</th>
+                                <th style="width: 120px;">Descanso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ejercicio_dia in dia.ejercicios_asignados.all %}
+                            <tr>
+                                <td data-label="#">
+                                    <div class="exercise-order">{{ ejercicio_dia.orden }}</div>
+                                </td>
+                                <td data-label="Ejercicio">
+                                    <div class="exercise-name">{{ ejercicio_dia.ejercicio.nombre_ejercicio }}</div>
+                                    <div class="exercise-group">
+                                        <i class="fas fa-dumbbell icon-group"></i>
+                                        {{ ejercicio_dia.ejercicio.grupo_muscular.nombre_grupo }}
+                                    </div>
+                                    <span class="exercise-equipment">
+                                        <i class="fas fa-tools"></i> {{ ejercicio_dia.ejercicio.get_tipo_equipo_display }}
+                                    </span>
+                                </td>
+                                <td data-label="Series">
+                                    <div class="stat-value">{{ ejercicio_dia.series }}</div>
+                                    <div class="stat-label">series</div>
+                                </td>
+                                <td data-label="Repeticiones">
+                                    <div class="stat-value">{{ ejercicio_dia.repeticiones }}</div>
+                                    <div class="stat-label">reps</div>
+                                </td>
+                                <td data-label="Peso">
+                                    <div class="stat-value">
+                                        {% if ejercicio_dia.peso_sugerido %}
+                                            {{ ejercicio_dia.peso_sugerido }} kg
+                                        {% else %}
+                                            <span style="color: #94a3b8;">Corporal</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td data-label="Descanso">
+                                    <div class="stat-value">{{ ejercicio_dia.descanso_minutos }}</div>
+                                    <div class="stat-label">minutos</div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No hay días configurados</h3>
+                    <p>Este plan aún no tiene días de entrenamiento asignados.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
