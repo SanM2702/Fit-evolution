@@ -70,27 +70,230 @@ CONTENEDOR PRINCIPAL
     z-index: 1;
 }
 
-/* Botón de regreso */
+/* Botones de navegación */
+.navigation-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    flex: 0.5;
+    min-width: 100px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border: 6px solid rgba(255, 252, 252, 0.87);
+    border-radius: 21px;
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.904),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto de brillo en hover */
+.nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(241, 241, 241, 0.815), transparent);
+    transition: left 0.6s ease;
+}
+
+.nav-btn:hover::before {
+    left: 100%;
+}
+
+.nav-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 15px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.719), rgba(230, 227, 227, 0.808));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Botón Volver - Azul oscuro */
+.nav-btn-back {
+    background: linear-gradient(135deg, rgba(168, 168, 168, 0.7), rgba(255, 255, 255, 0.747));
+    border-color: rgba(218, 218, 218, 0.5);
+}
+
+.nav-btn-back:hover {
+    background: linear-gradient(135deg, rgba(146, 146, 146, 0.85), rgba(236, 236, 236, 0.65));
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(168, 168, 168, 0.5),
+                0 0 25px rgba(206, 206, 206, 0.918);
+    border-color: rgba(241, 241, 241, 0.7);
+}
+
+.nav-btn-back:active {
+    transform: translateY(-2px) scale(1);
+}
+
+/* Botón Mi Entrenamiento - Azul oscuro */
+.nav-btn-training {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.7), rgba(30, 58, 138, 0.5));
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.nav-btn-training:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.85), rgba(30, 58, 138, 0.65));
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(30, 58, 138, 0.5),
+                0 0 25px rgba(59, 130, 246, 0.3);
+    border-color: rgba(96, 165, 250, 0.7);
+}
+
+.nav-btn-training:active:not(:disabled) {
+    transform: translateY(-2px) scale(1);
+}
+
+.nav-btn-training:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+}
+
+/* Botón Nutrición - Verde */
+.nav-btn-nutrition {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.7), rgba(16, 185, 129, 0.5));
+    border-color: rgba(52, 211, 153, 0.5);
+}
+
+.nav-btn-nutrition:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.85), rgba(16, 185, 129, 0.65));
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.5),
+                0 0 25px rgba(52, 211, 153, 0.3);
+    border-color: rgba(110, 231, 183, 0.7);
+}
+
+.nav-btn-nutrition:active {
+    transform: translateY(-2px) scale(1);
+}
+
+/* Botón Cardio - Naranja */
+.nav-btn-cardio {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.7), rgba(249, 115, 22, 0.5));
+    border-color: rgba(251, 146, 60, 0.5);
+}
+
+.nav-btn-cardio:hover:not(:disabled) {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.85), rgba(249, 115, 22, 0.65));
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(249, 115, 22, 0.5),
+                0 0 25px rgba(251, 146, 60, 0.3);
+    border-color: rgba(253, 186, 116, 0.7);
+}
+
+.nav-btn-cardio:active:not(:disabled) {
+    transform: translateY(-2px) scale(1);
+}
+
+.nav-btn-cardio:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+}
+
+/* Iconos SVG */
+.nav-btn svg {
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.nav-btn:hover:not(:disabled) svg {
+    transform: scale(1.1);
+}
+
+/* 
+   BOTÓN DE REGRESO (BACK BUTTON)
+ */
+
 .back-button {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    gap: 10px;
+    padding: 12px 24px;
+    margin-bottom: 3px;
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(148, 163, 184, 0.4));
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
     color: var(--white);
     text-decoration: none;
-    font-weight: 500;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    font-weight: 600;
+    font-size: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Efecto de brillo en hover para back-button */
+.back-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.back-button:hover::before {
+    left: 100%;
 }
 
 .back-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-5px);
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+    background: linear-gradient(135deg, rgba(148, 163, 184, 0.75), rgba(148, 163, 184, 0.55));
+    transform: translateX(-5px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(148, 163, 184, 0.4),
+                0 0 20px rgba(203, 213, 225, 0.3);
+    border-color: rgba(226, 232, 240, 0.6);
+}
+
+.back-button:active {
+    transform: translateX(-3px) scale(1);
+}
+
+.back-button svg {
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.back-button:hover svg {
+    transform: translateX(-3px);
 }
 
 /* ===================================
@@ -411,6 +614,180 @@ HEADER
     font-weight: 500;
 }
 
+/* Descripción de objetivos */
+.objetivo-description {
+    display: none;
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(30, 64, 175, 0.05));
+    border-left: 4px solid #775eb1;
+    border-radius: 8px;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+
+/* ===================================
+   SISTEMA DE PORCENTAJE DE GRASA
+   =================================== */
+
+/* Colores para diferentes niveles de grasa */
+.grasa-critico {
+    color: #dc2626 !important; /* Rojo */
+    font-weight: 700;
+}
+
+.grasa-minimo {
+    color: #ea580c !important; /* Naranja */
+    font-weight: 700;
+}
+
+.grasa-muy-bajo {
+    color: #d97706 !important; /* Amarillo/Dorado */
+    font-weight: 700;
+}
+
+.grasa-ideal {
+    color: #16a34a !important; /* Verde */
+    font-weight: 700;
+}
+
+.grasa-promedio {
+    color: #16a34a !important; /* Verde */
+    font-weight: 700;
+}
+
+.grasa-riesgo {
+    color: #d97706 !important; /* Amarillo/Dorado */
+    font-weight: 700;
+}
+
+.grasa-alto-riesgo {
+    color: #dc2626 !important; /* Rojo */
+    font-weight: 700;
+}
+
+.grasa-sin-datos {
+    color: #6b7280 !important; /* Gris */
+    font-weight: 700;
+}
+
+/* Contenedor del mensaje de grasa */
+.grasa-info {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    animation: fadeInUp 0.4s ease;
+}
+
+/* Colores de borde para el mensaje */
+.grasa-info .grasa-critico {
+    border-left-color: #dc2626;
+}
+
+.grasa-info .grasa-minimo {
+    border-left-color: #ea580c;
+}
+
+.grasa-info .grasa-muy-bajo {
+    border-left-color: #d97706;
+}
+
+.grasa-info .grasa-ideal {
+    border-left-color: #16a34a;
+}
+
+.grasa-info .grasa-promedio {
+    border-left-color: #16a34a;
+}
+
+.grasa-info .grasa-riesgo {
+    border-left-color: #d97706;
+}
+
+.grasa-info .grasa-alto-riesgo {
+    border-left-color: #dc2626;
+}
+
+.grasa-info .grasa-sin-datos {
+    border-left-color: #6b7280;
+}
+
+/* Icono del mensaje */
+.grasa-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grasa-icon svg {
+    width: 25px;
+    height: 25px;
+}
+
+/* Colores específicos para los iconos según el nivel */
+.grasa-icon.grasa-critico svg {
+    stroke: #dc2626; /* Rojo */
+}
+
+.grasa-icon.grasa-minimo svg {
+    stroke: #ea580c; /* Naranja */
+}
+
+.grasa-icon.grasa-muy-bajo svg {
+    stroke: #d97706; /* Amarillo/Dorado */
+}
+
+.grasa-icon.grasa-ideal svg {
+    stroke: #16a34a; /* Verde */
+}
+
+.grasa-icon.grasa-promedio svg {
+    stroke: #16a34a; /* Verde */
+}
+
+.grasa-icon.grasa-riesgo svg {
+    stroke: #d97706; /* Amarillo/Dorado */
+}
+
+.grasa-icon.grasa-alto-riesgo svg {
+    stroke: #dc2626; /* Rojo */
+}
+
+.grasa-icon.grasa-sin-datos svg {
+    stroke: #6b7280; /* Gris */
+}
+
+/* Texto del mensaje */
+.grasa-mensaje {
+    font-weight: 600;
+    flex: 1;
+}
+
+/* Ajustar el contenedor de grasa para mejor visualización */
+#grasa-container {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#grasa-container .data-label,
+#grasa-container .data-value {
+    align-self: flex-start;
+    
+}
+
+
+
 /* ===================================
    BOTONES
    =================================== */
@@ -642,11 +1019,13 @@ HEADER
 .badge-intenso {
     background: rgba(16, 185, 129, 0.1);
     color: var(--success);
+    margin-top: 45px;
 }
 
 .badge-objetivo {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(30, 64, 175, 0.1));
     color: var(--dark-blue);
+    margin-top: 45px;
 }
 
 .profile-footer {
@@ -707,6 +1086,17 @@ HEADER
 @media (max-width: 768px) {
     .profile-container {
         padding: 20px 15px;
+    }
+
+    .navigation-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-btn {
+        min-width: 100%;
+        padding: 12px 16px;
+        font-size: 0.9rem;
     }
 
     .profile-card,

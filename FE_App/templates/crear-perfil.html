@@ -122,6 +122,7 @@
                             <div class="form-group">
                                 <label for="{{ form.objetivo.id_for_label }}">{{ form.objetivo.label }}</label>
                                 {{ form.objetivo }}
+                                <div id="objetivo-description" class="objetivo-description"></div>
                                 {% if form.objetivo.errors %}
                                     <span class="error">{{ form.objetivo.errors.0 }}</span>
                                 {% endif %}
@@ -187,6 +188,44 @@
             pesoInput.addEventListener('input', calcularIMC);
             alturaInput.addEventListener('input', calcularIMC);
         }
+
+        // Descripciones de objetivos
+        const objetivoDescriptions = {
+            'perdida_peso': ' Enfocado en reducir tu porcentaje de grasa corporal mediante un déficit calórico controlado y entrenamiento cardiovascular combinado con pesas para preservar masa muscular.',
+            'recomposicion': ' Busca ganar músculo mientras pierdes grasa simultáneamente. Ideal para principiantes o personas con sobrepeso que quieren mejorar su composición corporal sin cambios drásticos de peso.',
+            'hipertrofia': ' Diseñado para maximizar el crecimiento muscular mediante entrenamiento de fuerza progresivo y un superávit calórico. Perfecto si tu objetivo es aumentar masa muscular y volumen.'
+        };
+
+        // Función para actualizar la descripción del objetivo
+        function actualizarDescripcionObjetivo() {
+            const objetivoSelect = document.getElementById('id_objetivo');
+            const descripcionDiv = document.getElementById('objetivo-description');
+            
+            if (objetivoSelect && descripcionDiv) {
+                const valorSeleccionado = objetivoSelect.value;
+                
+                if (valorSeleccionado && objetivoDescriptions[valorSeleccionado]) {
+                    descripcionDiv.textContent = objetivoDescriptions[valorSeleccionado];
+                    descripcionDiv.style.display = 'block';
+                    descripcionDiv.style.opacity = '0';
+                    setTimeout(() => {
+                        descripcionDiv.style.opacity = '1';
+                    }, 10);
+                } else {
+                    descripcionDiv.style.display = 'none';
+                }
+            }
+        }
+
+        // Event listener para el cambio de objetivo
+        document.addEventListener('DOMContentLoaded', function() {
+            const objetivoSelect = document.getElementById('id_objetivo');
+            if (objetivoSelect) {
+                objetivoSelect.addEventListener('change', actualizarDescripcionObjetivo);
+                // Mostrar descripción si ya hay un valor seleccionado
+                actualizarDescripcionObjetivo();
+            }
+        });
 
         // Animación de entrada
         document.addEventListener('DOMContentLoaded', function() {

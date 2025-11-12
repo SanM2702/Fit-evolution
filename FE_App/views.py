@@ -5,6 +5,8 @@ from django.conf import settings
 from django.http import JsonResponse
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import IntegrityError
+from django.db.models import Max
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -162,9 +164,15 @@ def nutricion(request):
     """Vista de nutrición con datos del perfil del usuario."""
     try:
         profile = request.user.profile
+        # Obtener plan activo del usuario y contar días configurados
+        plan_activo = PlanEntrenamiento.objects.filter(usuario=request.user, estado='activo').first()
+        dias_entrenamiento = plan_activo.dias.count() if plan_activo else 0
+
         context = {
             'profile': profile,
             'user': request.user,
+            'plan': plan_activo,
+            'dias_entrenamiento': dias_entrenamiento,
         }
         return render(request, 'nutricion.html', context)
     except UserProfile.DoesNotExist:
@@ -284,8 +292,12 @@ def ver_perfil(request):
         messages.warning(request, 'Aún no has creado tu perfil.')
         return redirect('crear_perfil')
     
+    # Obtener el plan de entrenamiento más reciente del usuario
+    plan = PlanEntrenamiento.objects.filter(usuario=request.user).order_by('-fecha_creacion').first()
+    
     context = {
         'profile': profile,
+        'plan': plan,
     }
     return render(request, 'perfil.html', context)
 
@@ -328,18 +340,38 @@ def dashboard_entrenamiento(request):
     
     # Obtener o crear plan activo del usuario
     plan_activo = PlanEntrenamiento.objects.filter(
-        usuario=request.user, 
+        usuario=request.user,
         estado='activo'
-    ).first()
+    ).order_by('-fecha_actualizacion').first()
     
     # Si no existe plan, crear uno de ejemplo
     if not plan_activo:
         plan_activo = crear_plan_ejemplo(request.user, profile)
     
+    # Evaluar porcentaje de grasa para alertas
+    porcentaje_grasa = profile.porcentaje_grasa
+    alerta_grasa = None
+    
+    if porcentaje_grasa <= 4:
+        alerta_grasa = {
+            'tipo': 'critico',
+            'titulo': 'Problema Crítico Detectado',
+            'mensaje': 'Tu porcentaje de grasa corporal está en un nivel crítico ({}%). Existe riesgo de fallo orgánico o anorexia. Es urgente consultar con un profesional de la salud.'.format(porcentaje_grasa),
+            'icono': 'fas fa-exclamation-circle'
+        }
+    elif porcentaje_grasa > 31:
+        alerta_grasa = {
+            'tipo': 'critico',
+            'titulo': 'Problema Crítico Detectado',
+            'mensaje': 'Tu porcentaje de grasa corporal está en un nivel de alto riesgo ({}%). Existe alto riesgo de enfermedades cardiovasculares, diabetes y otras enfermedades. Es importante consultar con un profesional de la salud.'.format(porcentaje_grasa),
+            'icono': 'fas fa-exclamation-circle'
+        }
+    
     context = {
         'profile': profile,
         'plan': plan_activo,
         'user': request.user,
+        'alerta_grasa': alerta_grasa,
     }
     return render(request, 'entrenamiento-dashboard.html', context)
 
@@ -495,9 +527,38 @@ def editar_plan_entrenamiento(request, plan_id):
         if 'actualizar_plan' in request.POST:
             form = PlanEntrenamientoForm(request.POST, instance=plan)
             if form.is_valid():
-                form.save()
+                # Guardar inmediatamente los cambios del formulario (incluye fecha_inicio/fecha_fin)
+                plan = form.save()
+
+                # Actualizar el objetivo en el perfil del usuario si está presente en el formulario
+                if 'objetivo' in form.cleaned_data and hasattr(request.user, 'profile'):
+                    request.user.profile.objetivo = form.cleaned_data['objetivo']
+                    request.user.profile.save()
+
+                # Sincronizar cantidad de días configurados sin sobreescribir otros campos ya guardados
+                nuevo_total_dias = plan.dias.count()
+                if plan.dias_semana != nuevo_total_dias:
+                    plan.dias_semana = nuevo_total_dias
+                    plan.save(update_fields=['dias_semana'])
+
+                # Si este plan quedó activo, desactivar otros activos del mismo usuario
+                if plan.estado == 'activo':
+                    (PlanEntrenamiento.objects
+                        .filter(usuario=request.user, estado='activo')
+                        .exclude(id=plan.id)
+                        .update(estado='pausado'))
                 messages.success(request, 'Plan actualizado exitosamente.')
                 return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+            else:
+                # Mantener el formulario con errores para mostrarlos en la plantilla
+                form_plan = form
+                # Mostrar errores en mensajes para diagnóstico rápido
+                try:
+                    messages.error(request, f"Errores al guardar el plan: {form.errors.as_text()}")
+                except Exception:
+                    pass
+                # Continuar hacia la sección de render al final del método
+                
         
         # Agregar nuevo día
         elif 'agregar_dia' in request.POST:
@@ -514,6 +575,9 @@ def editar_plan_entrenamiento(request, plan_id):
                         nombre_dia=nombre_dia,
                         descripcion=descripcion
                     )
+                    # Actualizar cantidad de días configurados
+                    plan.dias_semana = plan.dias.count()
+                    plan.save(update_fields=['dias_semana'])
                     messages.success(request, f'Día {nombre_dia} agregado exitosamente.')
                 else:
                     messages.error(request, 'Ya existe un entrenamiento para ese día.')
@@ -524,6 +588,9 @@ def editar_plan_entrenamiento(request, plan_id):
             dia_id = request.POST.get('dia_id')
             dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
             dia.delete()
+            # Actualizar cantidad de días configurados
+            plan.dias_semana = plan.dias.count()
+            plan.save(update_fields=['dias_semana'])
             messages.success(request, 'Día eliminado exitosamente.')
             return redirect('editar_plan_entrenamiento', plan_id=plan.id)
         
@@ -531,8 +598,22 @@ def editar_plan_entrenamiento(request, plan_id):
         elif 'actualizar_dia' in request.POST:
             dia_id = request.POST.get('dia_id')
             dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
-            dia.nombre_dia = request.POST.get('nombre_dia', dia.nombre_dia)
-            dia.descripcion = request.POST.get('descripcion', '')
+            numero_dia = request.POST.get('numero_dia')
+            nombre_dia = request.POST.get('nombre_dia')
+            descripcion = request.POST.get('descripcion', '')
+            
+            # Verificar que el nuevo número de día no esté ya ocupado (excepto por el día actual)
+            if numero_dia and numero_dia != str(dia.numero_dia):
+                if DiaEntrenamiento.objects.filter(plan=plan, numero_dia=numero_dia).exclude(id=dia.id).exists():
+                    messages.error(request, 'Ya existe un entrenamiento para ese día de la semana.')
+                    return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+            
+            # Actualizar los campos
+            if numero_dia:
+                dia.numero_dia = numero_dia
+            if nombre_dia:
+                dia.nombre_dia = nombre_dia
+            dia.descripcion = descripcion
             dia.save()
             messages.success(request, 'Día actualizado exitosamente.')
             return redirect('editar_plan_entrenamiento', plan_id=plan.id)
@@ -547,20 +628,30 @@ def editar_plan_entrenamiento(request, plan_id):
             descanso_minutos = request.POST.get('descanso_minutos')
             
             dia = get_object_or_404(DiaEntrenamiento, id=dia_id, plan=plan)
-            
-            # Obtener el siguiente orden disponible
-            ultimo_orden = DiaEjercicio.objects.filter(dia=dia).count()
-            orden = ultimo_orden + 1
-            
-            DiaEjercicio.objects.create(
-                dia=dia,
-                ejercicio_id=ejercicio_id,
-                orden=orden,
-                series=series,
-                repeticiones=repeticiones,
-                peso_sugerido=peso_sugerido,
-                descanso_minutos=descanso_minutos
-            )
+
+            # Calcular siguiente orden disponible de forma segura
+            intentos = 0
+            while True:
+                intentos += 1
+                ultimo_orden = DiaEjercicio.objects.filter(dia=dia).aggregate(m=Max('orden'))['m'] or 0
+                orden = int(ultimo_orden) + 1
+                try:
+                    DiaEjercicio.objects.create(
+                        dia=dia,
+                        ejercicio_id=ejercicio_id,
+                        orden=orden,
+                        series=series,
+                        repeticiones=repeticiones,
+                        peso_sugerido=peso_sugerido,
+                        descanso_minutos=descanso_minutos
+                    )
+                    break
+                except IntegrityError:
+                    # En caso de colisión (doble submit), reintentar con un orden mayor
+                    if intentos >= 3:
+                        messages.error(request, 'No se pudo agregar el ejercicio por un conflicto de orden. Intenta nuevamente.')
+                        return redirect('editar_plan_entrenamiento', plan_id=plan.id)
+                    continue
             messages.success(request, 'Ejercicio agregado exitosamente.')
             return redirect('editar_plan_entrenamiento', plan_id=plan.id)
         
@@ -587,8 +678,14 @@ def editar_plan_entrenamiento(request, plan_id):
             messages.success(request, 'Ejercicio actualizado exitosamente.')
             return redirect('editar_plan_entrenamiento', plan_id=plan.id)
     
-    # GET request
-    form_plan = PlanEntrenamientoForm(instance=plan)
+    # Preparar formulario para renderizar
+    # Si fue un POST inválido arriba, ya existe form_plan = form
+    if request.method != 'POST' or 'form_plan' not in locals():
+        # Inicializar el formulario con los datos del plan y el objetivo del perfil del usuario
+        initial_data = {}
+        if hasattr(request.user, 'profile') and request.user.profile.objetivo:
+            initial_data['objetivo'] = request.user.profile.objetivo
+        form_plan = PlanEntrenamientoForm(instance=plan, initial=initial_data)
     dias = plan.dias.all().prefetch_related('ejercicios_asignados__ejercicio__grupo_muscular').order_by('numero_dia')
     
     # Obtener todos los ejercicios disponibles agrupados por grupo muscular

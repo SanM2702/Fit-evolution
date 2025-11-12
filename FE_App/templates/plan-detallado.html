@@ -290,7 +290,7 @@
         <!-- Navigation -->
         <div class="nav-buttons">
             <a href="{% url 'dashboard_entrenamiento' %}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                <i class="fas fa-arrow-left"></i> Volver 
             </a>
             <a href="{% url 'editar_plan_entrenamiento' plan.id %}" class="btn-secondary" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
                 <i class="fas fa-edit"></i> Editar Plan
@@ -337,7 +337,7 @@
                             {% for ejercicio_dia in dia.ejercicios_asignados.all %}
                             <tr>
                                 <td data-label="#">
-                                    <div class="exercise-order">{{ ejercicio_dia.orden }}</div>
+                                    <div class="exercise-order">{{ forloop.counter }}</div>
                                 </td>
                                 <td data-label="Ejercicio">
                                     <div class="exercise-name">{{ ejercicio_dia.ejercicio.nombre_ejercicio }}</div>

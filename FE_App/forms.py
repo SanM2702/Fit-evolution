@@ -169,14 +169,36 @@ class UserProfileEditForm(forms.ModelForm):
 
 class PlanEntrenamientoForm(forms.ModelForm):
     """Formulario para editar información básica del plan"""
+    OBJETIVO_CHOICES = [
+        ('perdida_peso', 'Pérdida de peso'),
+        ('recomposicion', 'Recomposición genética'),
+        ('hipertrofia', 'Hipertrofia'),
+    ]
+    
+    # Sobrescribir el campo objetivo para usar un select
+    objetivo = forms.ChoiceField(
+        choices=OBJETIVO_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        }),
+        label='Objetivo de Entrenamiento',
+    )
+    
+    # Sobrescribir el campo nombre_plan para cambiar el help_text
+    nombre_plan = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': ''
+        }),
+        label='Nombre del Plan',
+        help_text='',  # Eliminar el help_text o poner el texto que quieras
+    )
+    
     class Meta:
         model = PlanEntrenamiento
         fields = ['nombre_plan', 'fecha_inicio', 'fecha_fin', 'objetivo', 'dias_semana', 'estado']
         widgets = {
-            'nombre_plan': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Plan Hipertrofia 12 semanas'
-            }),
             'fecha_inicio': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
@@ -185,14 +207,12 @@ class PlanEntrenamientoForm(forms.ModelForm):
                 'class': 'form-control',
                 'type': 'date'
             }),
-            'objetivo': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Objetivo del plan'
-            }),
             'dias_semana': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'min': '1',
-                'max': '7'
+                'max': '7',
+                'readonly': 'readonly',
+                'disabled': 'disabled'
             }),
             'estado': forms.Select(attrs={
                 'class': 'form-control'
@@ -203,9 +223,16 @@ class PlanEntrenamientoForm(forms.ModelForm):
             'fecha_inicio': 'Fecha de Inicio',
             'fecha_fin': 'Fecha de Fin',
             'objetivo': 'Objetivo',
-            'dias_semana': 'Días por Semana',
+            'dias_semana': '',
             'estado': 'Estado del Plan',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Deshabilitar a nivel de formulario para que no sea requerido ni procesado desde el POST
+        if 'dias_semana' in self.fields:
+            self.fields['dias_semana'].disabled = True
+            self.fields['dias_semana'].required = False
 
 
 class DiaEntrenamientoForm(forms.ModelForm):
