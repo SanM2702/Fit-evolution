@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Plan - FIT EVOLUTION</title>
+    <link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/editar-plan.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <a href="{% url 'dashboard_entrenamiento' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        <div class="header">
+            <h1><i class="fas fa-edit"></i> Editar Plan</h1>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-check-circle"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Información del Plan</h2>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-grid">
+                    {% for field in form_plan %}
+                    <div class="form-group">
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" name="actualizar_plan" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </form>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Días de Entrenamiento</h2>
+                <button class="btn btn-success" onclick="openModal('modalDia')">
+                    <i class="fas fa-plus"></i> Agregar día de entrenamiento
+                </button>
+            </div>
+
+            {% for dia in dias %}
+            <div class="day-card">
+                <div class="day-header">
+                    <h3>{{ dia.get_numero_dia_display }} - {{ dia.nombre_dia }}</h3>
+                    <div>
+                        <button class="btn btn-small" onclick="editDay({{ dia.id }})">Editar</button>
+                        <form method="post" style="display:inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="dia_id" value="{{ dia.id }}">
+                            <button type="submit" name="eliminar_dia" class="btn btn-danger btn-small">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="day-body">
+                    <button class="btn btn-success btn-small" onclick="openModal('modalEj{{ dia.id }}')">
+                        <i class="fas fa-plus"></i> Agregar Ejercicio
+                    </button>
+                    
+                    {% for ej in dia.ejercicios_asignados.all %}
+                    <div class="exercise-item">
+                        <span class="order">{{ ej.orden }}</span>
+                        <div class="details">
+                            <strong>{{ ej.ejercicio.nombre_ejercicio }}</strong>
+                            <span>{{ ej.series }}x{{ ej.repeticiones }}</span>
+                        </div>
+                        <form method="post" style="display:inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="ejercicio_dia_id" value="{{ ej.id }}">
+                            <button type="submit" name="eliminar_ejercicio" class="btn btn-danger btn-small">X</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div id="modalEj{{ dia.id }}" class="modal">
+    <div class="modal-content">
+        <h3>Agregar Ejercicio</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="dia_id" value="{{ dia.id }}">
+                            <div class="form-group">
+                                <label><i class="fas fa-dumbbell"></i> Ejercicio</label>
+                                <select name="ejercicio_id" required>
+                                    {% for grupo in grupos_musculares %}
+                                    <optgroup label="{{ grupo.nombre_grupo }}">
+                                        {% for ej in grupo.ejercicios.all %}
+                                        <option value="{{ ej.id }}">{{ ej.nombre_ejercicio }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-layer-group"></i> Series</label>
+                                <input type="number" name="series" value="3" min="1" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-repeat"></i> Rango de Repeticiones</label>
+                                <input type="text" name="repeticiones" value="8-12" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-clock"></i> Descanso (minutos)</label>
+                                <input type="number" name="descanso_minutos" value="1.5" step="0.5" required>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button type="submit" name="agregar_ejercicio" class="btn btn-success btn-small">
+                                    <i class="fas fa-check"></i> Agregar
+                                </button>
+                                <button type="button" onclick="closeModal('modalEj{{ dia.id }}')" class="btn btn-danger btn-small">
+                                    <i class="fas fa-times"></i> Cerrar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="modalDia" class="modal">
+        <div class="modal-content">
+            <h3>Agregar Día</h3>
+            <form method="post">
+                {% csrf_token %}
+                <select name="numero_dia" required>
+                    {% for num, nombre in dias_semana %}
+                    <option value="{{ num }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="nombre_dia" placeholder="Nombre" required>
+                <textarea name="descripcion"></textarea>
+                <button type="submit" name="agregar_dia">Agregar</button>
+                <button type="button" onclick="closeModal('modalDia')">Cerrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    </script>
+</body>
+</html>

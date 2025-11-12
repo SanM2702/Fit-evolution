@@ -19,4 +19,8 @@ urlpatterns = [
     path('crear-perfil/', views.crear_perfil, name='crear_perfil'),
     path('perfil/', views.ver_perfil, name='ver_perfil'),
     path('editar-perfil/', views.editar_perfil, name='editar_perfil'),
+    # URLs de entrenamiento
+    path('entrenamiento/', views.dashboard_entrenamiento, name='dashboard_entrenamiento'),
+    path('plan/<int:plan_id>/', views.ver_plan_entrenamiento, name='ver_plan_entrenamiento'),
+    path('plan/<int:plan_id>/editar/', views.editar_plan_entrenamiento, name='editar_plan_entrenamiento'),
 ]
