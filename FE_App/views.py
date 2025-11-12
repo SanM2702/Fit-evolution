@@ -1,3 +1,9 @@
+import joblib
+import os
+import numpy as np
+from django.conf import settings
+from django.http import JsonResponse
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
@@ -9,6 +15,87 @@ from django.contrib.auth import get_user_model
 from .forms import CustomUserCreationForm, UserProfileStep1Form, UserProfileStep2Form, UserProfileEditForm, PlanEntrenamientoForm, DiaEntrenamientoForm, DiaEjercicioForm
 from .models import UserProfile, PlanEntrenamiento, DiaEntrenamiento, DiaEjercicio, GrupoMuscular, Ejercicio
 from datetime import date, timedelta
+
+@login_required
+def get_macronutrientes(request):
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        return JsonResponse({'error': 'Perfil no encontrado'}, status=404)
+
+    # Mapear los datos del perfil al formato esperado por el modelo
+    genero_map = {'M': 'Masculino', 'F': 'Femenino', 'O': 'Otro'}
+    nivel_exp_map = {
+        'principiante': 'Principiante',
+        'intermedio': 'Intermedio',
+        'avanzado': 'Avanzado'
+    }
+
+    # Obtener valores del perfil con valores por defecto seguros
+    datos_usuario = {
+        'Edad': int(profile.edad or 25),
+        'Género': genero_map.get(profile.sexo, 'Masculino'),
+        'Peso_(kg)': float(profile.peso or 70),
+        'Altura_(m)': float(profile.altura or 1.70) / 100,  # Convertir cm a m
+        'Frecuencia_entrenamiento_(días/semana)': 5,  # Valor por defecto
+        'Duración_sesión_(horas)': 1.0,  # Valor por defecto
+        'Nivel_experiencia': nivel_exp_map.get(profile.nivel_actividad, 'Intermedio'),
+        'Objetivo': getattr(profile, 'objetivo', 'Mantener peso'),
+        'Porcentaje_grasa': float(getattr(profile, 'porcentaje_grasa', 20.0)),
+        'Masa_magra_(kg)': float(profile.peso or 70) * (1 - (float(getattr(profile, 'porcentaje_grasa', 20.0)) / 100))
+    }
+
+    try:
+        # Ruta al modelo y al escalador
+        model_path = os.path.join(settings.BASE_DIR, 'ModelosML', 'MacroNutrientes', 'modelo_macros.pkl')
+        scaler_path = os.path.join(settings.BASE_DIR, 'ModelosML', 'MacroNutrientes', 'scaler.pkl')
+        
+        # Cargar modelo y escalador
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        
+        # Codificar variables categóricas
+        genero_encoder = {'Masculino': 0, 'Femenino': 1, 'Otro': 2}
+        objetivo_encoder = {'Perder grasa': 0, 'Mantener peso': 1, 'Ganar músculo': 2}
+        nivel_encoder = {'Principiante': 0, 'Intermedio': 1, 'Avanzado': 2}
+
+        # Preparar datos para predicción
+        X_pred = np.array([[
+            datos_usuario['Edad'],
+            genero_encoder[datos_usuario['Género']],
+            datos_usuario['Peso_(kg)'],
+            datos_usuario['Altura_(m)'],
+            datos_usuario['Frecuencia_entrenamiento_(días/semana)'],
+            datos_usuario['Duración_sesión_(horas)'],
+            nivel_encoder[datos_usuario['Nivel_experiencia']],
+            objetivo_encoder.get(datos_usuario['Objetivo'], 1),  # Default a 'Mantener peso'
+            datos_usuario['Porcentaje_grasa'],
+            datos_usuario['Masa_magra_(kg)']
+        ]])
+
+        # Escalar características
+        X_scaled = scaler.transform(X_pred)
+        
+        # Realizar predicción
+        y_pred = model.predict(X_scaled)
+        
+        # Redondear valores
+        proteinas = round(y_pred[0][0])
+        carbohidratos = round(y_pred[0][1])
+        grasas = round(y_pred[0][2])
+        
+        # Calcular calorías totales
+        calorias = (proteinas * 4) + (carbohidratos * 4) + (grasas * 9)
+        
+        return JsonResponse({
+            'calorias': int(calorias),
+            'proteinas': proteinas,
+            'carbohidratos': carbohidratos,
+            'grasas': grasas
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def login_view(request):
     if request.method == 'POST':

@@ -88,14 +88,101 @@
             </div>
             <div class="recommendations">
                 <h3>Para alcanzar tus objetivos 🔥</h3>
-                <ul>
-                    <li><strong>Calorías diarias:</strong> 2800 kcal</li>
-                    <li><strong>Proteínas:</strong> 150 g</li>
-                    <li><strong>Carbohidratos:</strong> 350 g</li>
-                    <li><strong>Grasas:</strong> 70 g</li>
-                    <li><strong>Alimentos sugeridos:</strong> Pollo, arroz integral, aguacate, huevos, avena, frutos secos</li>
-                </ul>
+                <div id="loading" class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Cargando recomendaciones personalizadas...</p>
+                </div>
+                <div id="macros-container" style="display: none;">
+                    <ul>
+                        <li><strong>Calorías diarias:</strong> <span id="calorias">-</span> kcal</li>
+                        <li><strong>Proteínas:</strong> <span id="proteinas">-</span> g</li>
+                        <li><strong>Carbohidratos:</strong> <span id="carbohidratos">-</span> g</li>
+                        <li><strong>Grasas:</strong> <span id="grasas">-</span> g</li>
+                        <li><strong>Alimentos sugeridos:</strong> <span id="alimentos-sugeridos">Cargando...</span></li>
+                    </ul>
+                </div>
             </div>
+
+            <style>
+            .loading-spinner {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                margin: 0 auto 10px;
+                border: 4px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top-color: #4CAF50;
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            </style>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Obtener recomendaciones de macronutrientes
+                fetch('/api/macronutrientes/')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al cargar las recomendaciones');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Actualizar la interfaz con los datos
+                        document.getElementById('calorias').textContent = data.calorias || '-';
+                        document.getElementById('proteinas').textContent = data.proteinas || '-';
+                        document.getElementById('carbohidratos').textContent = data.carbohidratos || '-';
+                        document.getElementById('grasas').textContent = data.grasas || '-';
+                        
+                        // Ocultar spinner y mostrar contenido
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('macros-container').style.display = 'block';
+                        
+                        // Actualizar alimentos sugeridos basados en los macros
+                        updateAlimentosSugeridos(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('loading').innerHTML = 
+                            '<p style="color: #ff4444;">Error al cargar las recomendaciones. Recargando en 5 segundos...</p>';
+                        setTimeout(() => window.location.reload(), 5000);
+                    });
+
+                function updateAlimentosSugeridos(data) {
+                    const alimentosSugeridos = document.getElementById('alimentos-sugeridos');
+                    const alimentos = [];
+                    
+                    // Agregar alimentos ricos en proteínas
+                    if (data.proteinas > 0) {
+                        alimentos.push('pollo', 'pavo', 'huevos', 'pescado', 'legumbres');
+                    }
+                    
+                    // Agregar alimentos ricos en carbohidratos
+                    if (data.carbohidratos > 0) {
+                        alimentos.push('arroz integral', 'avena', 'batata', 'frutas', 'pan integral');
+                    }
+                    
+                    // Agregar alimentos ricos en grasas saludables
+                    if (data.grasas > 0) {
+                        alimentos.push('aguacate', 'frutos secos', 'aceite de oliva', 'salmón');
+                    }
+                    
+                    // Mostrar hasta 5 alimentos aleatorios
+                    const alimentosAleatorios = [...new Set(alimentos)]  // Eliminar duplicados
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 5);
+                        
+                    alimentosSugeridos.textContent = alimentosAleatorios.join(', ');
+                }
+            });
+            </script>
         </section>
     <section id="seccion3" class="extra-section animate-on-load">
             <h2>Sección 3</h2>
