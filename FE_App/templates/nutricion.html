@@ -98,7 +98,6 @@
                         <li><strong>Proteínas:</strong> <span id="proteinas">-</span> g</li>
                         <li><strong>Carbohidratos:</strong> <span id="carbohidratos">-</span> g</li>
                         <li><strong>Grasas:</strong> <span id="grasas">-</span> g</li>
-                        <li><strong>Alimentos sugeridos:</strong> <span id="alimentos-sugeridos">Cargando...</span></li>
                     </ul>
                 </div>
             </div>
@@ -145,8 +144,9 @@
                         document.getElementById('loading').style.display = 'none';
                         document.getElementById('macros-container').style.display = 'block';
                         
-                        // Actualizar alimentos sugeridos basados en los macros
-                        updateAlimentosSugeridos(data);
+                        // Construir secciones dinámicas
+                        buildSnacksSugeridos(data);
+                        buildAlimentosSugeridos(data);
                     })
                     .catch(error => {
                         console.error('Error:', error);
@@ -155,45 +155,68 @@
                         setTimeout(() => window.location.reload(), 5000);
                     });
 
-                function updateAlimentosSugeridos(data) {
-                    const alimentosSugeridos = document.getElementById('alimentos-sugeridos');
-                    const alimentos = [];
-                    
-                    // Agregar alimentos ricos en proteínas
-                    if (data.proteinas > 0) {
-                        alimentos.push('pollo', 'pavo', 'huevos', 'pescado', 'legumbres');
-                    }
-                    
-                    // Agregar alimentos ricos en carbohidratos
-                    if (data.carbohidratos > 0) {
-                        alimentos.push('arroz integral', 'avena', 'batata', 'frutas', 'pan integral');
-                    }
-                    
-                    // Agregar alimentos ricos en grasas saludables
-                    if (data.grasas > 0) {
-                        alimentos.push('aguacate', 'frutos secos', 'aceite de oliva', 'salmón');
-                    }
-                    
-                    // Mostrar hasta 5 alimentos aleatorios
-                    const alimentosAleatorios = [...new Set(alimentos)]  // Eliminar duplicados
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 5);
-                        
-                    alimentosSugeridos.textContent = alimentosAleatorios.join(', ');
+                // Helpers para construir tarjetas con macros
+                function makeCardHTML(titulo, kcal, p, c, g) {
+                    return `
+                        <div class="macro-card">
+                            <h4>${titulo}</h4>
+                            <div class="macro-grid">
+                                <div><span class="pill kcal">${kcal}</span><small>kcal</small></div>
+                                <div><span class="pill p">${p}</span><small>g proteína</small></div>
+                                <div><span class="pill c">${c}</span><small>g carbs</small></div>
+                                <div><span class="pill g">${g}</span><small>g grasas</small></div>
+                            </div>
+                        </div>`;
+                }
+
+                function buildSnacksSugeridos(data) {
+                    const cont = document.getElementById('snacks-container');
+                    if (!cont || !data || !data.calorias) return;
+                    // Dos snacks: 15% y 10% del total
+                    const partes = [0.15, 0.10];
+                    const snacksBase = ['Yogur griego con frutos rojos', 'Tostadas integrales con aguacate'];
+                    cont.innerHTML = '';
+                    partes.forEach((frac, idx) => {
+                        const p = Math.round((data.proteinas || 0) * frac);
+                        const c = Math.round((data.carbohidratos || 0) * frac);
+                        const g = Math.round((data.grasas || 0) * frac);
+                        const kcal = p*4 + c*4 + g*9;
+                        cont.innerHTML += makeCardHTML(`${snacksBase[idx]} (Snack ${idx+1})`, kcal, p, c, g);
+                    });
+                }
+
+                function buildAlimentosSugeridos(data) {
+                    const cont = document.getElementById('foods-container');
+                    if (!cont) return;
+                    // Cuatro opciones de comida rápida con reparto aproximado
+                    const opciones = [
+                        { t: 'Pollo a la plancha con arroz', ratios: {p:0.30, c:0.25, g:0.15} },
+                        { t: 'Salmón con quinoa',             ratios: {p:0.25, c:0.20, g:0.25} },
+                        { t: 'Huevos y avena',               ratios: {p:0.20, c:0.25, g:0.15} },
+                        { t: 'Wok de tofu y verduras',       ratios: {p:0.20, c:0.25, g:0.15} },
+                    ];
+                    cont.innerHTML = '';
+                    opciones.forEach(opt => {
+                        const p = Math.round((data.proteinas || 0) * opt.ratios.p);
+                        const c = Math.round((data.carbohidratos || 0) * opt.ratios.c);
+                        const g = Math.round((data.grasas || 0) * opt.ratios.g);
+                        const kcal = p*4 + c*4 + g*9;
+                        cont.innerHTML += makeCardHTML(opt.t, kcal, p, c, g);
+                    });
                 }
             });
             </script>
         </section>
     <section id="seccion3" class="extra-section animate-on-load">
-            <h2>Sección 3</h2>
-            <p>Contenido adicional para futuras funcionalidades.</p>
+            <h2>Snacks sugeridos</h2>
+            <div id="snacks-container" class="macro-cards"></div>
         </section>
     <section id="seccion4" class="extra-section animate-on-load">
-            <h2>Sección 4</h2>
-            <p>Más información o módulos que se agregarán en el futuro.</p>
+            <h2>Alimentos sugeridos</h2>
+            <div id="foods-container" class="macro-cards"></div>
         </section>
-    </main>
-    <script>
+        </main>
+        <script>
         // Fondo animado
         window.addEventListener('DOMContentLoaded', () => {
             const bg = document.getElementById('bg-radial');
@@ -234,6 +257,17 @@
             });
         });
     </script>
-</body>
-</html>
-
+    <style>
+        .macro-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+        .macro-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem;border-radius:12px;backdrop-filter:blur(6px)}
+        .macro-card h4{margin:0 0 .5rem 0}
+        .macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;align-items:center}
+        .pill{display:inline-block;padding:.25rem .5rem;border-radius:999px;font-weight:700}
+        .pill.kcal{background:#222;color:#ffd166}
+        .pill.p{background:#1b4332;color:#b7e4c7}
+        .pill.c{background:#023047;color:#8ecae6}
+        .pill.g{background:#3a0ca3;color:#cdb4db}
+        small{display:block;opacity:.8}
+    </style>
+    </body>
+    </html>
