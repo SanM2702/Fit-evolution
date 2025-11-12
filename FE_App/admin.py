@@ -11,10 +11,11 @@ from .models import (
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'edad', 'sexo', 'peso', 'altura', 'imc', 'objetivo', 'nivel_actividad', 'fecha_creacion']
+    list_display = ['id', 'usuario', 'edad', 'sexo', 'peso', 'altura', 'imc', 'objetivo', 'nivel_actividad', 'fecha_creacion']
     list_filter = ['sexo', 'objetivo', 'nivel_actividad', 'fecha_creacion']
     search_fields = ['usuario__username', 'usuario__email', 'usuario__first_name', 'usuario__last_name']
-    readonly_fields = ['fecha_creacion', 'fecha_actualizacion']
+    readonly_fields = ['id', 'fecha_creacion', 'fecha_actualizacion']
+    list_display_links = ['id', 'usuario']
     
     fieldsets = (
         ('Usuario', {
@@ -40,9 +41,10 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(GrupoMuscular)
 class GrupoMuscularAdmin(admin.ModelAdmin):
-    list_display = ['nombre_grupo', 'descripcion', 'total_ejercicios']
+    list_display = ['id', 'nombre_grupo', 'descripcion', 'total_ejercicios']
     search_fields = ['nombre_grupo', 'descripcion']
     ordering = ['nombre_grupo']
+    list_display_links = ['id', 'nombre_grupo']
     
     def total_ejercicios(self, obj):
         return obj.ejercicios.count()
@@ -51,10 +53,11 @@ class GrupoMuscularAdmin(admin.ModelAdmin):
 
 @admin.register(Ejercicio)
 class EjercicioAdmin(admin.ModelAdmin):
-    list_display = ['nombre_ejercicio', 'grupo_muscular', 'tipo_equipo', 'nivel']
+    list_display = ['id', 'nombre_ejercicio', 'grupo_muscular', 'tipo_equipo', 'nivel']
     list_filter = ['grupo_muscular', 'tipo_equipo', 'nivel']
     search_fields = ['nombre_ejercicio', 'descripcion']
     ordering = ['grupo_muscular', 'nombre_ejercicio']
+    list_display_links = ['id', 'nombre_ejercicio']
     
     fieldsets = (
         ('Información Básica', {
@@ -75,11 +78,12 @@ class DiaEjercicioInline(admin.TabularInline):
 
 @admin.register(DiaEntrenamiento)
 class DiaEntrenamientoAdmin(admin.ModelAdmin):
-    list_display = ['plan', 'get_numero_dia_display', 'nombre_dia', 'total_ejercicios']
+    list_display = ['id', 'plan', 'get_numero_dia_display', 'nombre_dia', 'total_ejercicios']
     list_filter = ['numero_dia', 'plan__usuario']
     search_fields = ['nombre_dia', 'descripcion', 'plan__nombre_plan']
     ordering = ['plan', 'numero_dia']
     inlines = [DiaEjercicioInline]
+    list_display_links = ['id', 'nombre_dia']
     
     fieldsets = (
         ('Plan', {
@@ -104,12 +108,13 @@ class DiaEntrenamientoInline(admin.TabularInline):
 
 @admin.register(PlanEntrenamiento)
 class PlanEntrenamientoAdmin(admin.ModelAdmin):
-    list_display = ['nombre_plan', 'usuario', 'fecha_inicio', 'fecha_fin', 'dias_semana', 'estado', 'total_dias']
+    list_display = ['id', 'nombre_plan', 'usuario', 'fecha_inicio', 'fecha_fin', 'dias_semana', 'estado', 'total_dias']
     list_filter = ['estado', 'fecha_inicio', 'riesgo_lesion', 'riesgo_estancamiento']
     search_fields = ['nombre_plan', 'usuario__username', 'objetivo']
-    readonly_fields = ['fecha_creacion', 'fecha_actualizacion']
+    readonly_fields = ['id', 'fecha_creacion', 'fecha_actualizacion']
     date_hierarchy = 'fecha_inicio'
     inlines = [DiaEntrenamientoInline]
+    list_display_links = ['id', 'nombre_plan']
     
     fieldsets = (
         ('Usuario', {
@@ -135,10 +140,12 @@ class PlanEntrenamientoAdmin(admin.ModelAdmin):
 
 @admin.register(DiaEjercicio)
 class DiaEjercicioAdmin(admin.ModelAdmin):
-    list_display = ['dia', 'ejercicio', 'orden', 'series', 'repeticiones', 'peso_sugerido', 'descanso_minutos']
+    list_display = ['id', 'dia', 'ejercicio', 'orden', 'series', 'repeticiones', 'peso_sugerido', 'descanso_minutos']
     list_filter = ['dia__plan__usuario', 'ejercicio__grupo_muscular']
     search_fields = ['ejercicio__nombre_ejercicio', 'dia__nombre_dia']
     ordering = ['dia', 'orden']
+    readonly_fields = ['id']
+    list_display_links = ['id', 'ejercicio']
     
     fieldsets = (
         ('Día de Entrenamiento', {
@@ -155,11 +162,12 @@ class DiaEjercicioAdmin(admin.ModelAdmin):
 
 @admin.register(HistorialEntrenamiento)
 class HistorialEntrenamientoAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'get_ejercicio', 'fecha', 'serie_num', 'repeticiones_realizadas', 'peso_utilizado', 'rpe', 'molestia_nivel']
+    list_display = ['id', 'usuario', 'get_ejercicio', 'fecha', 'serie_num', 'repeticiones_realizadas', 'peso_utilizado', 'rpe', 'molestia_nivel']
     list_filter = ['fecha', 'usuario', 'rpe', 'molestia_nivel']
     search_fields = ['usuario__username', 'dia_ejercicio__ejercicio__nombre_ejercicio', 'notas']
-    readonly_fields = ['fecha']
+    readonly_fields = ['id', 'fecha']
     date_hierarchy = 'fecha'
+    list_display_links = ['id', 'usuario']
     
     fieldsets = (
         ('Usuario y Ejercicio', {

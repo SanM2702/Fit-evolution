@@ -40,8 +40,18 @@
                 <div class="form-grid">
                     {% for field in form_plan %}
                     <div class="form-group">
-                        <label>{{ field.label }}</label>
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                            {% if field.help_text %}
+                                <span class="help-text">{{ field.help_text }}</span>
+                            {% endif %}
+                        </label>
                         {{ field }}
+                        {% if field.errors %}
+                            <div class="error-message">
+                                {{ field.errors|join:", " }}
+                            </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -64,11 +74,13 @@
                 <div class="day-header">
                     <h3>{{ dia.get_numero_dia_display }} - {{ dia.nombre_dia }}</h3>
                     <div>
-                        <button class="btn btn-small" onclick="editDay({{ dia.id }})">Editar</button>
-                        <form method="post" style="display:inline">
+                        <button class="btn btn-small" onclick="openModal('modalEditDia{{ dia.id }}')">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <form id="form-delete-dia-{{ dia.id }}" method="post" style="display:inline">
                             {% csrf_token %}
                             <input type="hidden" name="dia_id" value="{{ dia.id }}">
-                            <button type="submit" name="eliminar_dia" class="btn btn-danger btn-small">Eliminar</button>
+                            <button type="submit" name="eliminar_dia" class="btn btn-danger btn-small" onclick="return openConfirm('¿Seguro que quieres eliminar este día?', 'form-delete-dia-{{ dia.id }}', 'eliminar_dia');">Eliminar</button>
                         </form>
                     </div>
                 </div>
@@ -82,13 +94,63 @@
                         <span class="order">{{ ej.orden }}</span>
                         <div class="details">
                             <strong>{{ ej.ejercicio.nombre_ejercicio }}</strong>
-                            <span>{{ ej.series }}x{{ ej.repeticiones }}</span>
+                            <span>
+                                {{ ej.series }}x{{ ej.repeticiones }}
+                                ·
+                                {% if ej.peso_sugerido %}
+                                    {{ ej.peso_sugerido }} kg
+                                {% else %}
+                                    Corporal
+                                {% endif %}
+                            </span>
                         </div>
-                        <form method="post" style="display:inline">
+                        <button class="btn btn-small" title="Editar ejercicio" onclick="openModal('modalEditEj{{ ej.id }}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form id="form-delete-ej-{{ ej.id }}" method="post" style="display:inline">
                             {% csrf_token %}
                             <input type="hidden" name="ejercicio_dia_id" value="{{ ej.id }}">
-                            <button type="submit" name="eliminar_ejercicio" class="btn btn-danger btn-small">X</button>
+                            <button type="submit" name="eliminar_ejercicio" class="btn btn-danger btn-small" title="Eliminar ejercicio" onclick="return openConfirm('¿Seguro que quieres eliminar este ejercicio?', 'form-delete-ej-{{ ej.id }}', 'eliminar_ejercicio');">X</button>
                         </form>
+                    </div>
+                    <!-- Modal editar ejercicio -->
+                    <div id="modalEditEj{{ ej.id }}" class="modal">
+                        <div class="modal-content">
+                            <h3>Editar Ejercicio</h3>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="ejercicio_dia_id" value="{{ ej.id }}">
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-layer-group"></i> Series</label>
+                                    <input type="number" name="series" value="{{ ej.series }}" min="1" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-repeat"></i> Repeticiones</label>
+                                    <input type="text" name="repeticiones" value="{{ ej.repeticiones }}" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-weight-hanging"></i> Peso (kg)</label>
+                                    <input type="number" name="peso_sugerido" step="0.5" min="0" value="{% if ej.peso_sugerido %}{{ ej.peso_sugerido }}{% endif %}" placeholder="Dejar vacío para corporal">
+                                </div>
+
+                                <div class="form-group">
+                                    <label><i class="fas fa-clock"></i> Descanso (minutos)</label>
+                                    <input type="number" name="descanso_minutos" step="0.5" min="0.5" value="{{ ej.descanso_minutos }}" required>
+                                </div>
+
+                                <div class="modal-actions">
+                                    <button type="submit" name="actualizar_ejercicio" class="btn btn-success btn-small">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button type="button" onclick="closeModal('modalEditEj{{ ej.id }}')" class="btn btn-danger btn-small">
+                                        <i class="fas fa-times"></i> Cerrar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -122,6 +184,11 @@
                             </div>
 
                             <div class="form-group">
+                                <label><i class="fas fa-weight-hanging"></i> Peso (kg) <span class="help-text">Opcional. Si se deja vacío, se asume peso corporal</span></label>
+                                <input type="number" name="peso_sugerido" step="0.5" min="0" placeholder="Ej: 20.5">
+                            </div>
+
+                            <div class="form-group">
                                 <label><i class="fas fa-clock"></i> Descanso (minutos)</label>
                                 <input type="number" name="descanso_minutos" value="1.5" step="0.5" required>
                             </div>
@@ -131,6 +198,45 @@
                                     <i class="fas fa-check"></i> Agregar
                                 </button>
                                 <button type="button" onclick="closeModal('modalEj{{ dia.id }}')" class="btn btn-danger btn-small">
+                                    <i class="fas fa-times"></i> Cerrar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Modal para editar día -->
+                <div id="modalEditDia{{ dia.id }}" class="modal">
+                    <div class="modal-content">
+                        <h3>Editar Día de Entrenamiento</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="dia_id" value="{{ dia.id }}">
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-calendar"></i> Día de la Semana</label>
+                                <select name="numero_dia" required>
+                                    {% for num, nombre in dias_semana %}
+                                    <option value="{{ num }}" {% if dia.numero_dia == num %}selected{% endif %}>{{ nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-tag"></i> Nombre del Día</label>
+                                <input type="text" name="nombre_dia" value="{{ dia.nombre_dia }}" placeholder="Ej: Pecho y Tríceps" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-align-left"></i> Descripción (opcional)</label>
+                                <textarea name="descripcion" placeholder="Descripción del día de entrenamiento" rows="3">{{ dia.descripcion }}</textarea>
+                            </div>
+                            
+                            <div class="modal-actions">
+                                <button type="submit" name="actualizar_dia" class="btn btn-success btn-small">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <button type="button" onclick="closeModal('modalEditDia{{ dia.id }}')" class="btn btn-danger btn-small">
                                     <i class="fas fa-times"></i> Cerrar
                                 </button>
                             </div>
@@ -147,22 +253,116 @@
             <h3>Agregar Día</h3>
             <form method="post">
                 {% csrf_token %}
-                <select name="numero_dia" required>
-                    {% for num, nombre in dias_semana %}
-                    <option value="{{ num }}">{{ nombre }}</option>
-                    {% endfor %}
-                </select>
-                <input type="text" name="nombre_dia" placeholder="Nombre" required>
-                <textarea name="descripcion"></textarea>
-                <button type="submit" name="agregar_dia">Agregar</button>
-                <button type="button" onclick="closeModal('modalDia')">Cerrar</button>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Día de la Semana</label>
+                    <select name="numero_dia" required>
+                        {% for num, nombre in dias_semana %}
+                        <option value="{{ num }}">{{ nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Nombre del Día</label>
+                    <input type="text" name="nombre_dia" placeholder="Ej: Pecho y Tríceps" required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-align-left"></i> Descripción (opcional)</label>
+                    <textarea name="descripcion" placeholder="Descripción del día de entrenamiento" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" name="agregar_dia" class="btn btn-success btn-small">
+                        <i class="fas fa-plus"></i> Agregar
+                    </button>
+                    <button type="button" onclick="closeModal('modalDia')" class="btn btn-danger btn-small">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
+                </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación reutilizable -->
+    <div id="modalConfirm" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar acción</h3>
+            <p id="confirmMessage">¿Seguro que quieres eliminar?</p>
+            <div class="modal-actions">
+                <button type="button" id="btnConfirmYes" class="btn btn-danger btn-small">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+                <button type="button" id="btnConfirmNo" class="btn btn-primary btn-small">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        let confirmTargetFormId = null;
+        let confirmActionName = null;
+        function openConfirm(message, formId, actionName) {
+            confirmTargetFormId = formId;
+            confirmActionName = actionName;
+            document.getElementById('confirmMessage').textContent = message;
+            openModal('modalConfirm');
+            return false; // evitar submit inmediato
+        }
+
+        // Guardar scroll antes de cualquier submit
+        function saveScrollPosition() {
+            try { sessionStorage.setItem('scrollPos', String(window.scrollY || window.pageYOffset || 0)); } catch (e) {}
+        }
+
+        // Restaurar scroll al cargar
+        window.addEventListener('load', function() {
+            try {
+                const y = sessionStorage.getItem('scrollPos');
+                if (y !== null) {
+                    setTimeout(function(){ window.scrollTo(0, parseInt(y, 10) || 0); }, 0);
+                    sessionStorage.removeItem('scrollPos');
+                }
+            } catch (e) {}
+        });
+
+        // Escuchar submits y clicks de botones submit
+        document.querySelectorAll('form').forEach(function(f){
+            f.addEventListener('submit', saveScrollPosition);
+        });
+        document.querySelectorAll('button[type="submit"]').forEach(function(b){
+            b.addEventListener('click', saveScrollPosition);
+        });
+
+        document.getElementById('btnConfirmYes').addEventListener('click', function() {
+            if (confirmTargetFormId) {
+                const form = document.getElementById(confirmTargetFormId);
+                if (form) {
+                    if (confirmActionName) {
+                        const hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = confirmActionName;
+                        hidden.value = '1';
+                        form.appendChild(hidden);
+                    }
+                    saveScrollPosition();
+                    form.submit();
+                }
+            }
+            confirmTargetFormId = null;
+            confirmActionName = null;
+            closeModal('modalConfirm');
+        });
+        document.getElementById('btnConfirmNo').addEventListener('click', function() {
+            confirmTargetFormId = null;
+            confirmActionName = null;
+            closeModal('modalConfirm');
+        });
     </script>
 </body>
 </html>

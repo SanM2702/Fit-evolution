@@ -35,7 +35,8 @@ body {
   height: 72px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* logo centrado */
+  padding: 0 40px;
   z-index: 9998;
   background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.15));
   backdrop-filter: blur(6px);
@@ -44,40 +45,73 @@ body {
   opacity: 0;
 }
 
-.site-header.visible { transform: translateY(0); opacity: 1; }
+/* Aparece suavemente */
+.site-header.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
 
-.site-logo { height: 48px; width: auto; }
+/* Logo centrado */
+.site-logo {
+  height: 48px;
+  width: auto;
+  margin: 0 auto;
+}
 
+/* Saludo alineado arriba a la derecha, flexible */
 .site-header .user-greeting {
   position: absolute;
   top: 8px;
   right: 16px;
   color: var(--clr-text);
-  font-size: 0.5rem;
+  font-size: 0.6rem;
+  line-height: 1.1; /* para permitir varias líneas sin amontonarse */
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  max-width: 30vw; /* evita que se desborde sobre el logo */
+  word-wrap: break-word;
   text-align: right;
-  white-space: nowrap;
+  white-space: normal; /* permite que el texto haga salto de línea */
 }
 
+/* Enlace del panel admin */
 .site-header .admin-link a {
   color: var(--clr-primary);
   background: rgba(255, 255, 255, 0);
   padding: 0.2rem 0.45rem;
-  margin: 0%;
   border-radius: 4px;
   text-decoration: none;
   font-size: 0.5rem;
   text-align: right;
 }
 
-.site-header .admin-link a:hover { opacity: 0.9; }
-
+.site-header .admin-link a:hover {
+  opacity: 0.9;
+}
 
 /* ensure nav doesn't hide under header */
 nav { padding-top: 1.6rem; }
+
+/* Logout link (esquina superior izquierda) */
+.logout-link {
+  position: fixed;
+  top: 10px;
+  left: 16px;
+  z-index: 10001; /* por encima de header e intro */
+}
+.logout-link__btn {
+  background: transparent;
+  border: none;
+  padding: 0.2rem 0.45rem;
+  color: var(--clr-primary);
+  font-size: 0.5rem;
+  font-weight: 300;
+  font-family: 'DashboardCustom', "Manrope", system-ui, sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+}
+.logout-link__btn:hover { opacity: 0.9; }
 
 /* Intro animation overlay */
 .intro {

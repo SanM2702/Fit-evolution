@@ -4,30 +4,121 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NUTRICION</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/MenuNutricion.css">
+    <style>
+        .floating-btn {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .floating-btn i {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Initial position - bottom right of first section */
+        .floating-btn {
+            right: 30px;
+            bottom: 30px;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .section-right .floating-btn {
+            right: 30px;
+            left: auto;
+        }
+        
+        .section-left .floating-btn {
+            left: 30px;
+            right: auto;
+        }
+        
+        .section-left:hover .floating-btn,
+        .section-right:hover .floating-btn {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
 
     <div class="split-screen">
-
         <!-- Sección izquierda -->
-        <div class="section-left d-flex flex-column justify-content-center align-items-center text-center">
+        <div class="section-left d-flex flex-column justify-content-center align-items-center text-center position-relative">
             <a href="{% url 'nutricioninfo' %}" class="title-link">
                 <h1 class="mb-3">¿Porque es importante</h1>
                 <h1 class="mb-3">la nutrición?</h1>
             </a>
+            <a href="{% url 'dashboard' %}" class="floating-btn">
+                <i class="bi bi-arrow-left"></i>
+            </a>
         </div>
         <!-- Sección derecha -->
-        <div class="section-right d-flex flex-column justify-content-center align-items-center text-center">
+        <div class="section-right d-flex flex-column justify-content-center align-items-center text-center position-relative">
             <a href="{% url 'nutricion' %}" class="title-link2">
                 <h1 class="mb-3">Mi plan Nutricional</h1>
             </a>
+            <a href="{% url 'dashboard' %}" class="floating-btn">
+                <i class="bi bi-arrow-right"></i>
+            </a>
         </div>
-
     </div>
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth transition for the floating button
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section-left, .section-right');
+            const buttons = document.querySelectorAll('.floating-btn');
+            
+            sections.forEach(section => {
+                section.addEventListener('mouseenter', function() {
+                    // Hide all buttons first
+                    buttons.forEach(btn => {
+                        btn.style.opacity = '0';
+                    });
+                    
+                    // Show the button in the hovered section
+                    const btn = this.querySelector('.floating-btn');
+                    if (btn) {
+                        // Small delay to ensure smooth transition
+                        setTimeout(() => {
+                            btn.style.opacity = '1';
+                        }, 10);
+                    }
+                });
+                
+                section.addEventListener('mouseleave', function() {
+                    // Hide all buttons when leaving any section
+                    buttons.forEach(btn => {
+                        btn.style.opacity = '0';
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

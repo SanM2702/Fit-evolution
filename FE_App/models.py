@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -136,7 +137,7 @@ class PlanEntrenamiento(models.Model):
     ]
     
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='planes_entrenamiento')
-    nombre_plan = models.CharField(max_length=100, help_text="Ej: Plan Hipertrofia 12 semanas")
+    nombre_plan = models.CharField(max_length=100, help_text="")
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     objetivo = models.CharField(max_length=100, help_text="Objetivo del plan")
@@ -157,6 +158,13 @@ class PlanEntrenamiento(models.Model):
         verbose_name = "Plan de Entrenamiento"
         verbose_name_plural = "Planes de Entrenamiento"
         ordering = ['-fecha_creacion']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['usuario'],
+                condition=Q(estado='activo'),
+                name='unique_active_plan_per_user'
+            )
+        ]
 
 
 class DiaEntrenamiento(models.Model):

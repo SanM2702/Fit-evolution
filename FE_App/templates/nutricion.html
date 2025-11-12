@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fit Evolution - Nutrición</title>
-    <link rel="icon" type="image/png" href="{% static 'images/logopng.png' %}">
     <link rel="stylesheet" href="../static/css/nutricion.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,7 +56,7 @@
                     </div>
                     <div class="profile-row">
                         <img src="../static/icons/calendario.png" alt="icono" class="profile-icon" width="32" height="32">
-                        <span><strong>Días de entrenamiento:</strong> 5 días/semana</span>
+                        <span><strong>Días de entrenamiento:</strong> {{ dias_entrenamiento }} días/semana</span>
                     </div>
                     <div class="profile-row" style="align-items: right;">
                         <img src="../static/icons/aptitud-fisica.png" alt="icono" class="profile-icon" width="32" height="32">
