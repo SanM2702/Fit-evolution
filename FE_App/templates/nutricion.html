@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fit Evolution - Nutrición</title>
@@ -86,25 +87,135 @@
             </div>
             <div class="recommendations">
                 <h3>Para alcanzar tus objetivos 🔥</h3>
-                <ul>
-                    <li><strong>Calorías diarias:</strong> 2800 kcal</li>
-                    <li><strong>Proteínas:</strong> 150 g</li>
-                    <li><strong>Carbohidratos:</strong> 350 g</li>
-                    <li><strong>Grasas:</strong> 70 g</li>
-                    <li><strong>Alimentos sugeridos:</strong> Pollo, arroz integral, aguacate, huevos, avena, frutos secos</li>
-                </ul>
+                <div id="loading" class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Cargando recomendaciones personalizadas...</p>
+                </div>
+                <div id="macros-container" style="display: none;">
+                    <ul>
+                        <li><strong>Calorías diarias:</strong> <span id="calorias">-</span> kcal</li>
+                        <li><strong>Proteínas:</strong> <span id="proteinas">-</span> g</li>
+                        <li><strong>Carbohidratos:</strong> <span id="carbohidratos">-</span> g</li>
+                        <li><strong>Grasas:</strong> <span id="grasas">-</span> g</li>
+                    </ul>
+                </div>
             </div>
+
+            <style>
+            .loading-spinner {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .spinner {
+                width: 40px;
+                height: 40px;
+                margin: 0 auto 10px;
+                border: 4px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top-color: #4CAF50;
+                animation: spin 1s ease-in-out infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+            </style>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Obtener recomendaciones de macronutrientes
+                fetch('/api/macronutrientes/')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al cargar las recomendaciones');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Actualizar la interfaz con los datos
+                        document.getElementById('calorias').textContent = data.calorias || '-';
+                        document.getElementById('proteinas').textContent = data.proteinas || '-';
+                        document.getElementById('carbohidratos').textContent = data.carbohidratos || '-';
+                        document.getElementById('grasas').textContent = data.grasas || '-';
+                        
+                        // Ocultar spinner y mostrar contenido
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('macros-container').style.display = 'block';
+                        
+                        // Construir secciones dinámicas
+                        buildSnacksSugeridos(data);
+                        buildAlimentosSugeridos(data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('loading').innerHTML = 
+                            '<p style="color: #ff4444;">Error al cargar las recomendaciones. Recargando en 5 segundos...</p>';
+                        setTimeout(() => window.location.reload(), 5000);
+                    });
+
+                // Helpers para construir tarjetas con macros
+                function makeCardHTML(titulo, kcal, p, c, g) {
+                    return `
+                        <div class="macro-card">
+                            <h4>${titulo}</h4>
+                            <div class="macro-grid">
+                                <div><span class="pill kcal">${kcal}</span><small>kcal</small></div>
+                                <div><span class="pill p">${p}</span><small>g proteína</small></div>
+                                <div><span class="pill c">${c}</span><small>g carbs</small></div>
+                                <div><span class="pill g">${g}</span><small>g grasas</small></div>
+                            </div>
+                        </div>`;
+                }
+
+                function buildSnacksSugeridos(data) {
+                    const cont = document.getElementById('snacks-container');
+                    if (!cont || !data || !data.calorias) return;
+                    // Dos snacks: 15% y 10% del total
+                    const partes = [0.15, 0.10];
+                    const snacksBase = ['Yogur griego con frutos rojos', 'Tostadas integrales con aguacate'];
+                    cont.innerHTML = '';
+                    partes.forEach((frac, idx) => {
+                        const p = Math.round((data.proteinas || 0) * frac);
+                        const c = Math.round((data.carbohidratos || 0) * frac);
+                        const g = Math.round((data.grasas || 0) * frac);
+                        const kcal = p*4 + c*4 + g*9;
+                        cont.innerHTML += makeCardHTML(`${snacksBase[idx]} (Snack ${idx+1})`, kcal, p, c, g);
+                    });
+                }
+
+                function buildAlimentosSugeridos(data) {
+                    const cont = document.getElementById('foods-container');
+                    if (!cont) return;
+                    // Cuatro opciones de comida rápida con reparto aproximado
+                    const opciones = [
+                        { t: 'Pollo a la plancha con arroz', ratios: {p:0.30, c:0.25, g:0.15} },
+                        { t: 'Salmón con quinoa',             ratios: {p:0.25, c:0.20, g:0.25} },
+                        { t: 'Huevos y avena',               ratios: {p:0.20, c:0.25, g:0.15} },
+                        { t: 'Wok de tofu y verduras',       ratios: {p:0.20, c:0.25, g:0.15} },
+                    ];
+                    cont.innerHTML = '';
+                    opciones.forEach(opt => {
+                        const p = Math.round((data.proteinas || 0) * opt.ratios.p);
+                        const c = Math.round((data.carbohidratos || 0) * opt.ratios.c);
+                        const g = Math.round((data.grasas || 0) * opt.ratios.g);
+                        const kcal = p*4 + c*4 + g*9;
+                        cont.innerHTML += makeCardHTML(opt.t, kcal, p, c, g);
+                    });
+                }
+            });
+            </script>
         </section>
     <section id="seccion3" class="extra-section animate-on-load">
-            <h2>Sección 3</h2>
-            <p>Contenido adicional para futuras funcionalidades.</p>
+            <h2>Snacks sugeridos</h2>
+            <div id="snacks-container" class="macro-cards"></div>
         </section>
     <section id="seccion4" class="extra-section animate-on-load">
-            <h2>Sección 4</h2>
-            <p>Más información o módulos que se agregarán en el futuro.</p>
+            <h2>Alimentos sugeridos</h2>
+            <div id="foods-container" class="macro-cards"></div>
         </section>
-    </main>
-    <script>
+        </main>
+        <script>
         // Fondo animado
         window.addEventListener('DOMContentLoaded', () => {
             const bg = document.getElementById('bg-radial');
@@ -145,6 +256,17 @@
             });
         });
     </script>
-</body>
-</html>
-
+    <style>
+        .macro-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+        .macro-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:1rem;border-radius:12px;backdrop-filter:blur(6px)}
+        .macro-card h4{margin:0 0 .5rem 0}
+        .macro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;align-items:center}
+        .pill{display:inline-block;padding:.25rem .5rem;border-radius:999px;font-weight:700}
+        .pill.kcal{background:#222;color:#ffd166}
+        .pill.p{background:#1b4332;color:#b7e4c7}
+        .pill.c{background:#023047;color:#8ecae6}
+        .pill.g{background:#3a0ca3;color:#cdb4db}
+        small{display:block;opacity:.8}
+    </style>
+    </body>
+    </html>

@@ -23,4 +23,6 @@ urlpatterns = [
     path('entrenamiento/', views.dashboard_entrenamiento, name='dashboard_entrenamiento'),
     path('plan/<int:plan_id>/', views.ver_plan_entrenamiento, name='ver_plan_entrenamiento'),
     path('plan/<int:plan_id>/editar/', views.editar_plan_entrenamiento, name='editar_plan_entrenamiento'),
+    path('api/macronutrientes/', views.get_macronutrientes, name='get_macronutrientes'),
+
 ]
