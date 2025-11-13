@@ -699,3 +699,233 @@ def editar_plan_entrenamiento(request, plan_id):
         'dias_semana': DiaEntrenamiento.DIAS_SEMANA,
     }
     return render(request, 'editar-plan.html', context)
+
+
+# ==================== FUNCIONES DE ML PARA PLANES INTELIGENTES ====================
+
+def generar_plan_inteligente_basico(profile):
+    """
+    Genera un plan de entrenamiento inteligente basado en reglas y datos del perfil
+    Esta es una versión simplificada que no requiere modelo ML entrenado
+    """
+    # Configuraciones basadas en nivel y objetivo
+    configuraciones = {
+        'sedentario': {
+            'series_range': (2, 3),
+            'reps_ranges': {
+                'perdida_peso': (12, 15),
+                'hipertrofia': (10, 12),
+                'recomposicion': (10, 12)
+            },
+            'descanso_range': (60, 90),
+            'dias_semana': 3
+        },
+        'ligero': {
+            'series_range': (3, 4),
+            'reps_ranges': {
+                'perdida_peso': (10, 12),
+                'hipertrofia': (8, 10),
+                'recomposicion': (8, 12)
+            },
+            'descanso_range': (90, 120),
+            'dias_semana': 4
+        },
+        'moderado': {
+            'series_range': (3, 4),
+            'reps_ranges': {
+                'perdida_peso': (10, 12),
+                'hipertrofia': (8, 10),
+                'recomposicion': (8, 12)
+            },
+            'descanso_range': (90, 120),
+            'dias_semana': 4
+        },
+        'intenso': {
+            'series_range': (4, 5),
+            'reps_ranges': {
+                'perdida_peso': (8, 10),
+                'hipertrofia': (6, 8),
+                'recomposicion': (6, 10)
+            },
+            'descanso_range': (120, 180),
+            'dias_semana': 5
+        }
+    }
+    
+    # Obtener configuración para el usuario
+    nivel = profile.nivel_actividad if profile.nivel_actividad in configuraciones else 'ligero'
+    objetivo = profile.objetivo if profile.objetivo in ['perdida_peso', 'hipertrofia', 'recomposicion'] else 'hipertrofia'
+    
+    config = configuraciones[nivel]
+    
+    # Distribuciones de entrenamiento por días
+    distribuciones_ejercicios = {
+        3: [  # 3 días - Push/Pull/Legs
+            {'nombre': 'Push (Pecho, Hombros, Tríceps)', 'grupos': ['Pecho', 'Hombros', 'Tríceps']},
+            {'nombre': 'Pull (Espalda, Bíceps)', 'grupos': ['Espalda', 'Bíceps']},
+            {'nombre': 'Legs (Piernas, Abdomen)', 'grupos': ['Piernas', 'Abdomen']}
+        ],
+        4: [  # 4 días - Upper/Lower
+            {'nombre': 'Upper 1 (Pecho, Tríceps)', 'grupos': ['Pecho', 'Tríceps']},
+            {'nombre': 'Lower 1 (Piernas)', 'grupos': ['Piernas']},
+            {'nombre': 'Upper 2 (Espalda, Bíceps)', 'grupos': ['Espalda', 'Bíceps']},
+            {'nombre': 'Lower 2 (Piernas, Abdomen)', 'grupos': ['Piernas', 'Abdomen']}
+        ],
+        5: [  # 5 días - Bro Split
+            {'nombre': 'Pecho', 'grupos': ['Pecho']},
+            {'nombre': 'Espalda', 'grupos': ['Espalda']},
+            {'nombre': 'Piernas', 'grupos': ['Piernas']},
+            {'nombre': 'Hombros', 'grupos': ['Hombros']},
+            {'nombre': 'Brazos (Bíceps, Tríceps, Abdomen)', 'grupos': ['Bíceps', 'Tríceps', 'Abdomen']}
+        ]
+    }
+    
+    dias_semana = config['dias_semana']
+    distribucion = distribuciones_ejercicios[dias_semana]
+    
+    # Seleccionar ejercicios por grupo muscular
+    ejercicios_por_grupo = {
+        'Pecho': [1, 2, 3],  # Press Banca, Press Inclinado, Aperturas
+        'Espalda': [6, 7, 8],  # Dominadas, Remo, Jalón
+        'Piernas': [11, 12, 13, 14],  # Sentadilla, Prensa, Peso Muerto, Extensiones
+        'Hombros': [15, 16, 17],  # Press Militar, Elevaciones, Face Pulls
+        'Bíceps': [9, 10],  # Curl Barra, Curl Martillo
+        'Tríceps': [4, 5],  # Fondos, Press Francés
+        'Abdomen': [18, 19]  # Plancha, Crunch
+    }
+    
+    # Calcular parámetros personalizados
+    peso_corporal = float(profile.peso)
+    
+    # Factores de peso por grupo muscular (porcentaje del peso corporal)
+    factores_peso = {
+        'Pecho': 0.8 + (0.2 if nivel == 'intenso' else 0.1 if nivel in ['moderado', 'ligero'] else 0),
+        'Espalda': 0.7 + (0.3 if nivel == 'intenso' else 0.2 if nivel in ['moderado', 'ligero'] else 0.1),
+        'Piernas': 1.2 + (0.3 if nivel == 'intenso' else 0.2 if nivel in ['moderado', 'ligero'] else 0),
+        'Hombros': 0.4 + (0.2 if nivel == 'intenso' else 0.1 if nivel in ['moderado', 'ligero'] else 0),
+        'Bíceps': 0.3 + (0.15 if nivel == 'intenso' else 0.1 if nivel in ['moderado', 'ligero'] else 0.05),
+        'Tríceps': 0.4 + (0.2 if nivel == 'intenso' else 0.1 if nivel in ['moderado', 'ligero'] else 0.05),
+        'Abdomen': 0  # Peso corporal
+    }
+    
+    plan_generado = {}
+    
+    for dia_num, info_dia in enumerate(distribucion, 1):
+        ejercicios_dia = []
+        
+        for grupo in info_dia['grupos']:
+            ejercicios_disponibles = ejercicios_por_grupo.get(grupo, [])
+            
+            # Número de ejercicios por grupo
+            if len(info_dia['grupos']) == 1:  # Día enfocado en un solo grupo
+                num_ejercicios = min(len(ejercicios_disponibles), 4)
+            elif len(info_dia['grupos']) == 2:  # Dos grupos
+                num_ejercicios = min(len(ejercicios_disponibles), 3)
+            else:  # Tres o más grupos
+                num_ejercicios = min(len(ejercicios_disponibles), 2)
+            
+            # Seleccionar ejercicios (tomar los primeros para consistencia)
+            ejercicios_seleccionados = ejercicios_disponibles[:num_ejercicios]
+            
+            for ejercicio_id in ejercicios_seleccionados:
+                # Calcular parámetros
+                series = config['series_range'][0] if objetivo == 'perdida_peso' else config['series_range'][1]
+                
+                reps_range = config['reps_ranges'][objetivo]
+                repeticiones = f"{reps_range[0]}-{reps_range[1]}"
+                
+                # Peso sugerido
+                factor_peso = factores_peso.get(grupo, 0.5)
+                peso_sugerido = round(peso_corporal * factor_peso, 1) if factor_peso > 0 else None
+                
+                # Descanso (en minutos)
+                descanso_base = config['descanso_range'][1] if grupo in ['Pecho', 'Espalda', 'Piernas'] else config['descanso_range'][0]
+                descanso_minutos = round(descanso_base / 60, 1)
+                
+                ejercicios_dia.append({
+                    'ejercicio_id': ejercicio_id,
+                    'series': series,
+                    'repeticiones': repeticiones,
+                    'peso_sugerido': peso_sugerido,
+                    'descanso_minutos': descanso_minutos
+                })
+        
+        plan_generado[dia_num] = {
+            'nombre_dia': info_dia['nombre'],
+            'ejercicios': ejercicios_dia
+        }
+    
+    return plan_generado, dias_semana
+
+
+@login_required
+def generar_plan_inteligente(request):
+    """
+    Vista para generar un plan de entrenamiento inteligente basado en el perfil del usuario
+    """
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        messages.error(request, 'Debes crear tu perfil primero para generar un plan inteligente.')
+        return redirect('crear_perfil')
+    
+    if request.method == 'POST':
+        # Generar plan inteligente
+        plan_data, dias_semana = generar_plan_inteligente_basico(profile)
+        
+        # Crear el plan en la base de datos
+        # Desactivar planes activos previos
+        PlanEntrenamiento.objects.filter(
+            usuario=request.user, 
+            estado='activo'
+        ).update(estado='pausado')
+        
+        # Crear nuevo plan
+        nuevo_plan = PlanEntrenamiento.objects.create(
+            usuario=request.user,
+            nombre_plan=f"Plan Inteligente {profile.get_objetivo_display()}",
+            fecha_inicio=date.today(),
+            fecha_fin=date.today() + timedelta(weeks=8),
+            objetivo=profile.objetivo,
+            estado='activo',
+            dias_semana=dias_semana
+        )
+        
+        # Crear días y ejercicios
+        for dia_num, info_dia in plan_data.items():
+            # Mapear día número a día de la semana
+            dias_mapping = {1: 1, 2: 3, 3: 5, 4: 6, 5: 2}  # Lun, Mie, Vie, Sab, Mar
+            numero_dia_semana = dias_mapping.get(dia_num, dia_num)
+            
+            dia_entrenamiento = DiaEntrenamiento.objects.create(
+                plan=nuevo_plan,
+                numero_dia=numero_dia_semana,
+                nombre_dia=info_dia['nombre_dia'],
+                descripcion=f"Entrenamiento generado automáticamente para {profile.get_objetivo_display()}"
+            )
+            
+            # Agregar ejercicios
+            for orden, ejercicio_info in enumerate(info_dia['ejercicios'], 1):
+                DiaEjercicio.objects.create(
+                    dia=dia_entrenamiento,
+                    ejercicio_id=ejercicio_info['ejercicio_id'],
+                    orden=orden,
+                    series=ejercicio_info['series'],
+                    repeticiones=ejercicio_info['repeticiones'],
+                    peso_sugerido=ejercicio_info['peso_sugerido'],
+                    descanso_minutos=ejercicio_info['descanso_minutos']
+                )
+        
+        messages.success(request, f'¡Plan inteligente generado exitosamente! Se creó un plan de {dias_semana} días adaptado a tu perfil.')
+        return redirect('ver_plan_entrenamiento', plan_id=nuevo_plan.id)
+    
+    # Vista previa del plan que se generaría
+    plan_preview, dias_semana = generar_plan_inteligente_basico(profile)
+    
+    context = {
+        'profile': profile,
+        'plan_preview': plan_preview,
+        'dias_semana': dias_semana
+    }
+    
+    return render(request, 'generar-plan-inteligente.html', context)

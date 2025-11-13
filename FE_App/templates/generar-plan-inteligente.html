@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Evolution - Generar Plan Inteligente</title>
+    <link rel="stylesheet" href="{% static 'css/entrenamiento-dashboard.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="bg-radial"></div>
+    
+    <header class="navbar animate-on-load">
+        <div class="logo">FIT EVOLUTION</div>
+        <nav class="nav-links">
+            <button class="btn" onclick="location.href='{% url 'dashboard' %}'">Inicio</button>
+            <button class="btn" onclick="location.href='{% url 'dashboard_entrenamiento' %}'">Entrenamiento</button>
+            <button class="btn" onclick="location.href='{% url 'ver_perfil' %}'">Perfil</button>
+            <button class="btn" onclick="location.href='{% url 'nutricion' %}'">Nutrición</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="personal-section animate-on-load">
+            <div class="cube-title-container">
+                <span class="cube-title cube-title-front">PLAN INTELIGENTE</span>
+                <span class="cube-title cube-title-back">{{ user.get_full_name|upper|default:user.username|upper }}</span>
+            </div>
+
+            <div class="profile-card spotlight-card">
+                <div class="spotlight-bg"></div>
+                <div class="card-content">
+                    <h2>🤖 Generador de Plan Inteligente</h2>
+                    <p>Nuestro sistema analizará tu perfil y generará un plan de entrenamiento personalizado basado en:</p>
+                    
+                    <div class="profile-summary">
+                        <div class="profile-row">
+                            <span><strong>Nivel de actividad:</strong> {{ profile.get_nivel_actividad_display }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Objetivo:</strong> {{ profile.get_objetivo_display }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Peso:</strong> {{ profile.peso }} kg</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Edad:</strong> {{ profile.edad }} años</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Días de entrenamiento sugeridos:</strong> {{ dias_semana }} días/semana</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista previa del plan -->
+            <div class="plan-preview">
+                <h3>📋 Vista Previa del Plan Generado</h3>
+                
+                {% for dia_num, info_dia in plan_preview.items %}
+                <div class="day-card">
+                    <h4>Día {{ dia_num }}: {{ info_dia.nombre_dia }}</h4>
+                    <div class="exercises-grid">
+                        {% for ejercicio in info_dia.ejercicios %}
+                        <div class="exercise-item">
+                            <div class="exercise-info">
+                                <span class="exercise-name">Ejercicio ID: {{ ejercicio.ejercicio_id }}</span>
+                                <div class="exercise-params">
+                                    <span class="param">{{ ejercicio.series }} series</span>
+                                    <span class="param">{{ ejercicio.repeticiones }} reps</span>
+                                    {% if ejercicio.peso_sugerido %}
+                                        <span class="param">{{ ejercicio.peso_sugerido }}kg</span>
+                                    {% endif %}
+                                    <span class="param">{{ ejercicio.descanso_minutos }}min descanso</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-generate">
+                        🚀 Generar Plan Inteligente
+                    </button>
+                </form>
+                <button class="btn-back" onclick="location.href='{% url 'dashboard_entrenamiento' %}'">
+                    ← Volver al Dashboard
+                </button>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="info-card">
+                <h4>ℹ️ ¿Cómo funciona?</h4>
+                <ul>
+                    <li><strong>Análisis del perfil:</strong> El sistema evalúa tu nivel de actividad, objetivo y datos físicos</li>
+                    <li><strong>Selección inteligente:</strong> Elige ejercicios apropiados para tu nivel y objetivo</li>
+                    <li><strong>Parámetros personalizados:</strong> Calcula series, repeticiones y pesos basados en tu perfil</li>
+                    <li><strong>Distribución óptima:</strong> Organiza los grupos musculares de manera eficiente</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <style>
+        .plan-preview {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .day-card {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .day-card h4 {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .exercises-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .exercise-item {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .exercise-name {
+            font-weight: bold;
+            color: #fff;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .exercise-params {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .param {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .info-card {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(33, 150, 243, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(33, 150, 243, 0.2);
+        }
+
+        .info-card h4 {
+            color: #2196F3;
+            margin-bottom: 1rem;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-card li:last-child {
+            border-bottom: none;
+        }
+
+        .profile-summary {
+            display: grid;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .profile-row {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+
+        /* Animaciones */
+        .animate-on-load {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animated-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Cubo giratorio */
+        .cube-title-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .cube-title {
+            display: block;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-align: center;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .cube-title-container.flipped .cube-title {
+            transform: rotateY(180deg);
+        }
+    </style>
+
+    <script>
+        // Animación de entrada para los elementos principales
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.animate-on-load').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('animated-in');
+                }, 200 + i * 200);
+            });
+        });
+
+        // Animación de cubo girando en el título
+        const cubeContainer = document.querySelector('.cube-title-container');
+        let cubeFlipped = false;
+        setInterval(() => {
+            cubeFlipped = !cubeFlipped;
+            if (cubeFlipped) {
+                cubeContainer.classList.add('flipped');
+            } else {
+                cubeContainer.classList.remove('flipped');
+            }
+        }, 4000);
+
+        // Fondo animado
+        window.addEventListener('DOMContentLoaded', () => {
+            const bg = document.getElementById('bg-radial');
+            setTimeout(() => {
+                bg.classList.add('visible');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
