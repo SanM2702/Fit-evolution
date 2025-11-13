@@ -233,6 +233,49 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
         }
+        .btn-inteligente {
+            position: relative;
+            padding: 14px 28px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(270deg, #8b5cf6, #7c3aed, #06b6d4, #8b5cf6);
+            background-size: 300% 300%;
+            border: 2px solid rgba(168, 85, 247, 0.8);
+            border-radius: 14px;
+            gap: 10px;
+            text-decoration: none;
+            animation: gradientFlow 5s ease infinite, glowPulse 2.5s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            transition: transform 0.3s ease;
+}
+
+        .btn-inteligente:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(99, 39, 240, 0.9);
+            }
+
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+            }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.4),
+                            0 0 30px rgba(124, 58, 237, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.8),
+                            0 0 50px rgba(124, 58, 237, 0.6);
+            }
+            }
 
         .btn-secondary {
             background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
@@ -249,6 +292,8 @@
             transition: all 0.3s ease;
             margin-right: 10px;
         }
+
+
 
         .btn-secondary:hover {
             background: linear-gradient(135deg, #64748b 0%, #334155 100%);

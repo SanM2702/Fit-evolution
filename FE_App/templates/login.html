@@ -12,10 +12,12 @@
         <div class="login-box">
             <h1>Fit Evolution</h1>
             <p class="desc">Inicia sesión para continuar con tu progreso.</p>
-                {% comment %} Mostrar errores provenientes de Django messages o de una variable `error` en el contexto {% endcomment %}
+                {% comment %} Mostrar solo mensajes de error para login {% endcomment %}
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="error-message {{ message.tags }}">{{ message }}</div>
+                        {% if message.tags == 'error' %}
+                            <div class="error-message {{ message.tags }}">{{ message }}</div>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
 
@@ -43,5 +45,20 @@
             </p>
         </div>
     </div>
+
+    <script>
+        // Auto-ocultar mensajes de error después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.style.display = 'none';
+                    }, 300);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>

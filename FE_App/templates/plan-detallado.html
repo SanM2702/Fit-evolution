@@ -70,6 +70,7 @@
 
         .btn-secondary:hover {
             background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+            transform: translateY(-2px);
         }
 
         /* Day Cards */
@@ -213,6 +214,68 @@
             margin-right: 5px;
         }
 
+        /* Messages */
+        .messages {
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: linear-gradient(270deg, #3b82f6, #8b5cf6, #06b6d4, transparent);
+            background-size: 300% 300%; /* permite que el gradiente se mueva */
+            border: 1px solid rgba(34, 38, 255, 0.4);
+            color: #ffffffff;
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            box-shadow: 0 4px 25px rgba(111, 0, 255, 0.35);
+            border-radius: 14px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: gradientShift 9s ease infinite, glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: 1px solid #ef4444;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border: 1px solid #f59e0b;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .alert i {
+            font-size: 1.2em;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -302,6 +365,26 @@
             <h1><i class="fas fa-clipboard-list"></i> {{ plan.nombre_plan }}</h1>
             <p>Plan detallado con ejercicios, series y repeticiones</p>
         </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                    <i class="fas fa-info-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
 
         <!-- Days Container -->
         <div class="days-container">

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fit Evolution - Generar Plan Inteligente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/generar-plan.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="bg-radial"></div>
+    
+    <header class="navbar animate-on-load">
+        <div class="logo">FIT EVOLUTION</div>
+        <nav class="nav-links">
+            <button class="btn" onclick="location.href='{% url 'dashboard' %}'">Inicio</button>
+            <button class="btn" onclick="location.href='{% url 'dashboard_entrenamiento' %}'">Entrenamiento</button>
+            <button class="btn" onclick="location.href='{% url 'ver_perfil' %}'">Perfil</button>
+            <button class="btn" onclick="location.href='{% url 'nutricion' %}'">Nutrición</button>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="personal-section animate-on-load">
+            <div class="cube-title-container">
+                <span class="cube-title cube-title-front">PLAN INTELIGENTE</span>
+            </div>
+
+            <div class="profile-card spotlight-card">
+                <div class="spotlight-bg"></div>
+                <div class="card-content">
+                    <h2> Generador de Plan Inteligente</h2>
+                    <p>Nuestro sistema analizará tu perfil y generará un plan de entrenamiento personalizado basado en:</p>
+                    
+                    <div class="profile-summary">
+                        <div class="profile-row">
+                            <span><strong>Nivel de actividad:</strong> {{ profile.get_nivel_actividad_display }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Objetivo:</strong> {{ profile.get_objetivo_display }}</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Peso:</strong> {{ profile.peso }} kg</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Edad:</strong> {{ profile.edad }} años</span>
+                        </div>
+                        <div class="profile-row">
+                            <span><strong>Días de entrenamiento sugeridos:</strong> {{ dias_semana }} días/semana</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <a class="info-text" href="{% url 'editar_perfil' %}">
+                  Asegurate de que estos datos sean correctos, si no lo son, puedes modificarlos haciendo click aqui.
+                </a>
+            </div>
+
+            <!-- Vista previa del plan -->
+            <div class="plan-preview">
+                <h3>Vista Previa del Plan Generado</h3>
+                <br>       
+                {% for dia_num, info_dia in plan_preview.items %}
+                <div class="day-card">
+                    <h4>{{ info_dia.dia_semana }}: {{ info_dia.nombre_dia }}</h4>
+                    <div class="exercises-grid">
+                        {% for ejercicio in info_dia.ejercicios %}
+                        <div class="exercise-item">
+                            <div class="exercise-info">
+                                <span class="exercise-name">{{ ejercicio.nombre_ejercicio }}</span>
+                                <div class="exercise-params">
+                                    <span class="param">{{ ejercicio.series }} series</span>
+                                    <span class="param">{{ ejercicio.repeticiones }} reps</span>
+                                    {% if ejercicio.peso_sugerido %}
+                                        <span class="param">{{ ejercicio.peso_sugerido }} kg</span>
+                                    {% endif %}
+                                    <span class="param">{{ ejercicio.descanso_minutos }} min descanso</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-generate">
+                         Generar Plan Inteligente
+                    </button>
+                </form>
+                <button class="btn-back" onclick="location.href='{% url 'dashboard_entrenamiento' %}'">
+                    ← Volver al Dashboard
+                </button>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="info-card">
+                <h4>ℹ ¿Cómo funciona?</h4>
+                <ul>
+                    <li><strong>Análisis del perfil:</strong> El sistema evalúa tu nivel de actividad, objetivo y datos físicos</li>
+                    <li><strong>Selección inteligente:</strong> Elige ejercicios apropiados para tu nivel y objetivo</li>
+                    <li><strong>Parámetros personalizados:</strong> Calcula series, repeticiones y pesos basados en tu perfil</li>
+                    <li><strong>Distribución óptima:</strong> Organiza los grupos musculares de manera eficiente</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <style>
+ 
+    </style>
+
+    <script>
+        // Animación de entrada para los elementos principales
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.animate-on-load').forEach((el, i) => {
+                setTimeout(() => {
+                    el.classList.add('animated-in');
+                }, 200 + i * 200);
+            });
+        });
+
+        // Fondo animado
+        window.addEventListener('DOMContentLoaded', () => {
+            const bg = document.getElementById('bg-radial');
+            setTimeout(() => {
+                bg.classList.add('visible');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

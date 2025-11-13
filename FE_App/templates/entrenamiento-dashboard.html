@@ -26,10 +26,11 @@
         <!-- Header -->
         <div class="header">
             <h1><i class="fas fa-dumbbell"></i> Mi Entrenamiento</h1>
-            <p>Bienvenido, {{ user.first_name|default:user.username }}! Aquí está tu plan personalizado</p>
+            <p>Bienvenido, {{ user.first_name|default:user.username }}! {% if tiene_plan_real %}Aquí está tu plan personalizado{% else %}Crea tu primer plan de entrenamiento{% endif %}</p>
         </div>
 
-        <!-- Stats Grid -->
+        <!-- Stats Grid - Solo mostrar si tiene plan real -->
+        {% if tiene_plan_real %}
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-bullseye"></i></div>
@@ -40,7 +41,7 @@
             <div class="stat-card">
                 <div class="icon"><i class="fas fa-calendar-week"></i></div>
                 <h3>Días por Semana</h3>
-                <div class="value">{{ plan.dias.count }} días</div>
+                <div class="value">{{ plan.dias.count|default:"0" }} días</div>
             </div>
 
             <div class="stat-card">
@@ -55,8 +56,10 @@
                 <div class="value">{{ profile.tiempo_entrenamiento|default:"60" }} min</div>
             </div>
         </div>
+        {% endif %}
 
-        <!-- Alerts Section -->
+        <!-- Alerts Section - Solo mostrar si tiene plan real -->
+        {% if tiene_plan_real %}
         <div class="alerts-section">
             <h2 style="color: #3b82f6; margin-bottom: 15px;">
                 <i class="fas fa-brain"></i> Análisis Inteligente
@@ -72,7 +75,7 @@
             </div>
             {% endif %}
             
-            {% if not plan.riesgo_lesion and not plan.riesgo_estancamiento and not alerta_grasa %}
+            {% if plan and not plan.riesgo_lesion and not plan.riesgo_estancamiento and not alerta_grasa %}
             <div class="alert-card alert-success">
                 <div class="icon"><i class="fas fa-check-circle"></i></div>
                 <div class="content">
@@ -82,7 +85,7 @@
             </div>
             {% endif %}
 
-            {% if plan.riesgo_lesion %}
+            {% if plan and plan.riesgo_lesion %}
             <div class="alert-card alert-danger">
                 <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="content">
@@ -92,7 +95,7 @@
             </div>
             {% endif %}
 
-            {% if plan.riesgo_estancamiento %}
+            {% if plan and plan.riesgo_estancamiento %}
             <div class="alert-card alert-warning">
                 <div class="icon"><i class="fas fa-chart-line"></i></div>
                 <div class="content">
@@ -102,9 +105,11 @@
             </div>
             {% endif %}
         </div>
+        {% endif %}
 
         <!-- Plan Section -->
         <div class="plan-section">
+            {% if tiene_plan_real %}
             <h2><i class="fas fa-clipboard-list"></i> {{ plan.nombre_plan }}</h2>
             
             <div class="plan-info">
@@ -126,13 +131,31 @@
                 </div>
             </div>
 
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: flex-start; margin-top: 25px;">
+                <!-- Mostrar botones de gestión cuando el usuario tiene un plan real -->
                 <a href="{% url 'ver_plan_entrenamiento' plan.id %}" class="btn-primary">
                     <i class="fas fa-eye"></i> Ver Mi Plan Completo
                 </a>
                 <a href="{% url 'editar_plan_entrenamiento' plan.id %}" class="btn-primary" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">
                     <i class="fas fa-edit"></i> Editar Mi Plan
                 </a>
+                <a href="{% url 'generar_plan_inteligente' %}" class="btn-inteligente">
+                    <i class="fas fa-robot"></i> Generar Nuevo Plan Inteligente
+                </a>
+            {% else %}
+                <!-- Usuario sin plan real -->
+                <div style="text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-dumbbell" style="font-size: 4rem; margin-bottom: 30px; opacity: 0.3; color: #3b82f6;"></i>
+                    <h2 style="margin-bottom: 15px; color: #ffffff; font-size: 2rem;">¡Comienza tu Transformación!</h2>
+                    <p style="color: #94a3b8; margin-bottom: 30px; font-size: 1.2rem; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        Crea tu primer plan de entrenamiento personalizado basado en tu perfil, objetivos y nivel de actividad. Nuestro sistema inteligente diseñará la rutina perfecta para ti.
+                    </p>
+                    <br>
+                    <a href="{% url 'generar_plan_inteligente' %}" class="btn-inteligente" style="font-size: 1.3rem; padding: 20px 40px; box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);">
+                        <i class="fas fa-robot"></i> Generar Mi Primer Plan Inteligente
+                    </a>
+                </div>
+            {% endif %}
             </div>
         </div>
     </div>
