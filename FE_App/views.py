@@ -18,6 +18,20 @@ from .forms import CustomUserCreationForm, UserProfileStep1Form, UserProfileStep
 from .models import UserProfile, PlanEntrenamiento, DiaEntrenamiento, DiaEjercicio, GrupoMuscular, Ejercicio
 from datetime import date, timedelta
 
+def clear_messages(request, message_types=None):
+    """
+    Función auxiliar para limpiar mensajes específicos de la sesión
+    """
+    storage = messages.get_messages(request)
+    if message_types:
+        # Filtrar y consumir solo los tipos especificados
+        for message in storage:
+            if message.tags in message_types:
+                pass  # Consumir el mensaje
+    else:
+        # Limpiar todos los mensajes
+        storage.used = True
+
 @login_required
 def get_macronutrientes(request):
     try:
@@ -107,10 +121,14 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, f'Bienvenido {username}')
+            # Limpiar mensajes anteriores
+            clear_messages(request)
             return redirect('dashboard')  # redirige al menu principal
         else:
             messages.error(request, 'Usuario o contraseña incorrectos')
+    else:
+        # Limpiar mensajes de éxito cuando se carga la página de login
+        clear_messages(request, ['success'])
 
     return render(request, 'login.html')
 
@@ -338,15 +356,20 @@ def dashboard_entrenamiento(request):
         messages.warning(request, 'Debes crear tu perfil primero.')
         return redirect('crear_perfil')
     
-    # Obtener o crear plan activo del usuario
+    # Obtener plan activo del usuario (sin crear uno automáticamente)
     plan_activo = PlanEntrenamiento.objects.filter(
         usuario=request.user,
         estado='activo'
     ).order_by('-fecha_actualizacion').first()
     
-    # Si no existe plan, crear uno de ejemplo
-    if not plan_activo:
-        plan_activo = crear_plan_ejemplo(request.user, profile)
+    # Determinar si el usuario tiene un plan real (solo planes generados por ML)
+    tiene_plan_real = plan_activo is not None
+    
+    # Eliminar cualquier plan de ejemplo existente del usuario
+    PlanEntrenamiento.objects.filter(
+        usuario=request.user,
+        nombre_plan__startswith='Plan de Ejemplo'
+    ).delete()
     
     # Evaluar porcentaje de grasa para alertas
     porcentaje_grasa = profile.porcentaje_grasa
@@ -372,6 +395,7 @@ def dashboard_entrenamiento(request):
         'plan': plan_activo,
         'user': request.user,
         'alerta_grasa': alerta_grasa,
+        'tiene_plan_real': tiene_plan_real,
     }
     return render(request, 'entrenamiento-dashboard.html', context)
 
@@ -380,6 +404,11 @@ def dashboard_entrenamiento(request):
 def ver_plan_entrenamiento(request, plan_id):
     """Vista detallada del plan de entrenamiento con ejercicios por día."""
     plan = get_object_or_404(PlanEntrenamiento, id=plan_id, usuario=request.user)
+    
+    # Mostrar mensaje de plan generado solo si viene de la generación
+    if request.session.get('plan_generado'):
+        messages.success(request, request.session['plan_generado'])
+        del request.session['plan_generado']
     
     # Obtener días de entrenamiento ordenados
     dias = plan.dias.all().prefetch_related('ejercicios_asignados__ejercicio__grupo_muscular')
@@ -828,6 +857,13 @@ def generar_plan_inteligente_basico(profile):
             ejercicios_seleccionados = ejercicios_disponibles[:num_ejercicios]
             
             for ejercicio_id in ejercicios_seleccionados:
+                # Obtener el objeto ejercicio para acceder al nombre
+                try:
+                    ejercicio = Ejercicio.objects.get(id=ejercicio_id)
+                    nombre_ejercicio = ejercicio.nombre_ejercicio
+                except Ejercicio.DoesNotExist:
+                    nombre_ejercicio = f"Ejercicio {ejercicio_id}"
+                
                 # Calcular parámetros
                 series = config['series_range'][0] if objetivo == 'perdida_peso' else config['series_range'][1]
                 
@@ -844,18 +880,38 @@ def generar_plan_inteligente_basico(profile):
                 
                 ejercicios_dia.append({
                     'ejercicio_id': ejercicio_id,
+                    'nombre_ejercicio': nombre_ejercicio,
                     'series': series,
                     'repeticiones': repeticiones,
                     'peso_sugerido': peso_sugerido,
                     'descanso_minutos': descanso_minutos
                 })
         
-        plan_generado[dia_num] = {
+        # Mapear día número a día de la semana para la vista previa
+        dias_mapping = {1: 1, 2: 3, 3: 5, 4: 6, 5: 2}  # Lun, Mie, Vie, Sab, Mar
+        numero_dia_semana = dias_mapping.get(dia_num, dia_num)
+        
+        # Nombres de días de la semana
+        nombres_dias = {
+            1: 'Lunes',
+            2: 'Martes', 
+            3: 'Miércoles',
+            4: 'Jueves',
+            5: 'Viernes',
+            6: 'Sábado',
+            7: 'Domingo'
+        }
+        
+        plan_generado[numero_dia_semana] = {
             'nombre_dia': info_dia['nombre'],
+            'dia_semana': nombres_dias.get(numero_dia_semana, f'Día {numero_dia_semana}'),
             'ejercicios': ejercicios_dia
         }
     
-    return plan_generado, dias_semana
+    # Ordenar el plan por día de la semana
+    plan_ordenado = dict(sorted(plan_generado.items()))
+    
+    return plan_ordenado, dias_semana
 
 
 @login_required
@@ -892,11 +948,8 @@ def generar_plan_inteligente(request):
         )
         
         # Crear días y ejercicios
-        for dia_num, info_dia in plan_data.items():
-            # Mapear día número a día de la semana
-            dias_mapping = {1: 1, 2: 3, 3: 5, 4: 6, 5: 2}  # Lun, Mie, Vie, Sab, Mar
-            numero_dia_semana = dias_mapping.get(dia_num, dia_num)
-            
+        for numero_dia_semana, info_dia in plan_data.items():
+            # El numero_dia_semana ya viene mapeado correctamente de generar_plan_inteligente_basico
             dia_entrenamiento = DiaEntrenamiento.objects.create(
                 plan=nuevo_plan,
                 numero_dia=numero_dia_semana,
@@ -916,7 +969,8 @@ def generar_plan_inteligente(request):
                     descanso_minutos=ejercicio_info['descanso_minutos']
                 )
         
-        messages.success(request, f'¡Plan inteligente generado exitosamente! Se creó un plan de {dias_semana} días adaptado a tu perfil.')
+        # Marcar en la sesión que se acaba de generar un plan
+        request.session['plan_generado'] = f'¡Plan inteligente generado exitosamente! Se creó un plan de {dias_semana} días adaptado a tu perfil.'
         return redirect('ver_plan_entrenamiento', plan_id=nuevo_plan.id)
     
     # Vista previa del plan que se generaría

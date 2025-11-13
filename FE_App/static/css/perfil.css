@@ -848,7 +848,7 @@ HEADER
 
 .btn-secondary {
     background: var(--light-gray);
-    color: var(--dark-gray);
+    color: var(--light-gray);
 }
 
 .btn-secondary:hover {
